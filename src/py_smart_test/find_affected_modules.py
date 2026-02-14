@@ -90,7 +90,11 @@ def get_affected_tests(
 
     for file_path in changed_files:
         try:
-            str_path = str(file_path)
+            str_path = (
+                file_path.as_posix()
+                if hasattr(file_path, "as_posix")
+                else str(file_path).replace("\\", "/")
+            )
 
             # Case 1: Source file
             if "src/" in str_path and str_path.endswith(".py"):
@@ -101,7 +105,7 @@ def get_affected_tests(
                         affected_modules.add(mod_name)
                 else:
                     # Deleted file logic
-                    parts = list(file_path.parts)
+                    parts = str_path.split("/")
                     try:
                         if parts[0] == "src":
                             # Strip src/
@@ -118,7 +122,7 @@ def get_affected_tests(
                         pass
 
             # Case 2: Test file
-            elif str_path.startswith("tests/") and str_path.endswith(".py"):
+            elif "tests/" in str_path and str_path.endswith(".py"):
                 direct_test_files.add(str_path)
 
         except Exception as e:

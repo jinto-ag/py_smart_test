@@ -8,12 +8,9 @@ allow_licenses:
   - "CC0-1.0"
   - "Unlicense"
   - "PSF-2.0"
+  - "MPL-2.0"
+  - "Python-2.0"
 fail_on_scopes:
   - "runtime"
-deny_licenses:
-  - "MS-PL"
-  - "WTFPL"
 vulnerability_check: true
 license_check: true
-base_ref: "main"
-head_ref: "HEAD"

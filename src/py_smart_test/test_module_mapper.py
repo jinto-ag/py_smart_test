@@ -31,7 +31,7 @@ def map_tests_to_modules(test_root: Path) -> Dict[str, List[str]]:
     # Iterate all test files
     for test_file in test_root.rglob("test_*.py"):
         rel_path = test_file.relative_to(test_root)
-        test_file_str = str(test_file.relative_to(_paths.REPO_ROOT))
+        test_file_str = test_file.relative_to(_paths.REPO_ROOT).as_posix()
 
         parts = list(rel_path.parts)
         filename = parts[-1]

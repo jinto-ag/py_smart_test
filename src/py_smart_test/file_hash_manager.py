@@ -69,7 +69,7 @@ def get_current_hashes() -> Dict[str, str]:
     current_hashes = {}
     for file_path in get_all_py_files():
         try:
-            rel_path = str(file_path.relative_to(_paths.REPO_ROOT))
+            rel_path = file_path.relative_to(_paths.REPO_ROOT).as_posix()
             file_hash = compute_file_hash(file_path)
             if file_hash:
                 current_hashes[rel_path] = file_hash
