@@ -102,7 +102,7 @@ def pytest_collection_modifyitems(
 
         result = get_affected_tests(since, staged)
         # Merge in working-tree files that may not appear in git diff
-        wt_paths = {str(p) for p in _wt_files}
+        wt_paths = {p.as_posix() for p in _wt_files}
         existing = set(result.get("tests", []))
         for path in wt_paths:
             if path.startswith("tests/") and path.endswith(".py"):
@@ -118,9 +118,9 @@ def pytest_collection_modifyitems(
     for item in items:
         # item.fspath gives the absolute path; relativize it
         try:
-            rel = str(item.path.relative_to(_paths.REPO_ROOT))
+            rel = item.path.relative_to(_paths.REPO_ROOT).as_posix()
         except (ValueError, AttributeError):
-            rel = str(getattr(item, "fspath", ""))
+            rel = str(getattr(item, "fspath", "")).replace("\\", "/")
         if rel in affected_test_files:
             affected_node_ids.add(item.nodeid)
 

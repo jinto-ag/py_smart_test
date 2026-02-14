@@ -121,14 +121,8 @@ def get_affected_tests(
 
     for file_path in changed_files:
         try:
-            str_path = (
-                file_path.as_posix()
-                if hasattr(file_path, "as_posix")
-                else str(file_path).replace("\\", "/")
-            )
-
             # Case 1: Source file
-            if "src/" in str_path and str_path.endswith(".py"):
+            if "src" in file_path.parts and file_path.suffix == ".py":
                 abs_path = _paths.REPO_ROOT / file_path
                 if abs_path.exists():
                     mod_name = get_module_name(abs_path, src_root)
@@ -136,7 +130,7 @@ def get_affected_tests(
                         affected_modules.add(mod_name)
                 else:
                     # Deleted file logic
-                    parts = str_path.split("/")
+                    parts = list(file_path.parts)
                     try:
                         if parts[0] == "src":
                             # Strip src/
@@ -153,8 +147,8 @@ def get_affected_tests(
                         pass
 
             # Case 2: Test file
-            elif "tests/" in str_path and str_path.endswith(".py"):
-                direct_test_files.add(str_path)
+            elif "tests" in file_path.parts and file_path.suffix == ".py":
+                direct_test_files.add(file_path.as_posix())
 
         except Exception as e:
             logger.warning(f"Error processing file {file_path}: {e}")

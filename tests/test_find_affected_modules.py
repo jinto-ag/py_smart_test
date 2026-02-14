@@ -286,7 +286,7 @@ def test_get_working_tree_changes_success(monkeypatch):
     files = find_affected_modules.get_working_tree_changes()
 
     # Only .py files returned
-    paths = [str(f) for f in files]
+    paths = [f.as_posix() for f in files]
     assert "src/pkg/a.py" in paths
     assert "tests/test_new.py" in paths
     assert "README.md" not in paths
@@ -308,7 +308,7 @@ def test_get_working_tree_changes_renames(monkeypatch):
     monkeypatch.setattr(subprocess, "run", mock_run)
     files = find_affected_modules.get_working_tree_changes()
     assert len(files) == 1
-    assert str(files[0]) == "new_name.py"
+    assert files[0].name == "new_name.py"
 
 
 def test_get_working_tree_changes_empty(monkeypatch):
