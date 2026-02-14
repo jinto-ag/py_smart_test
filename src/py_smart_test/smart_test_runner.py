@@ -1,3 +1,4 @@
+import json
 import logging
 import subprocess
 import sys
@@ -50,13 +51,18 @@ def setup_logging():
     return log_file
 
 
-def run_pytest(tests: List[str], extra_args: List[str]):
+def run_pytest(tests: List[str], extra_args: List[str]) -> bool:
+    """Run pytest with the given tests and extra args.
+
+    Returns True if tests were executed successfully, False if no tests to run.
+    Raises CalledProcessError if tests fail.
+    """
     cmd = ["pytest"] + extra_args
     if tests:
         cmd.extend(tests)
     else:
         logger.info("No tests provided. Running nothing.")
-        return
+        return False
 
     logger.info(f"Running command: {' '.join(cmd)}")
 
@@ -77,6 +83,8 @@ def run_pytest(tests: List[str], extra_args: List[str]):
     if exit_code != 0:
         raise subprocess.CalledProcessError(exit_code, cmd)
 
+    return True
+
 
 @app.command()
 def main(
@@ -90,16 +98,41 @@ def main(
     ),
     exclude_e2e: bool = typer.Option(True, help="Exclude E2E tests"),
     dry_run: bool = typer.Option(False, help="Print plan but don't run tests"),
-    # capture extra args for pytest?
-    # Typer doesn't support arbitrary extra args easily in same command signature.
-    # use ctx?
+    json_output: bool = typer.Option(
+        False, "--json", help="Output affected tests as JSON and exit (no test run)"
+    ),
 ):
     """
     Smart test runner.
+
+    With no arguments, delegates to ``pytest --smart`` so the plugin handles
+    test selection and prioritization.  Use ``--mode all``, ``--json``,
+    ``--dry-run``, or ``--regenerate-graph`` for advanced behaviour.
     """
     log_file = setup_logging()
     logger.info(f"Logging run to {log_file}")
 
+    # ── Fast path: delegate to pytest --smart when using defaults ───
+    # When the user runs `pst` with no special flags, we just run
+    # `pytest --smart` and let the plugin handle everything.
+    use_fast_path = (
+        mode == "affected" and not json_output and not dry_run and not regenerate_graph
+    )
+    if use_fast_path:
+        pytest_cmd = ["pytest", "--smart"]
+        if since != _paths.DEFAULT_BRANCH:
+            pytest_cmd.extend(["--smart-since", since])
+        if staged:
+            pytest_cmd.append("--smart-staged")
+        if exclude_e2e:
+            pytest_cmd.extend(["-m", "not e2e"])
+        logger.info(f"Running command: {' '.join(pytest_cmd)}")
+        result = subprocess.run(pytest_cmd)
+        # Exit code 5 = no tests selected (--smart deselected all), treat as success
+        exit_code = 0 if result.returncode == 5 else result.returncode
+        raise typer.Exit(exit_code)
+
+    # ── Full orchestration path ────────────────────────────────────
     # Check for first run / missing history
     # If no hash file exists, we consider this a fresh state.
     first_run = not HASH_FILE.exists()
@@ -110,8 +143,6 @@ def main(
         try:
             generate_graph_main()
             mapper_main()
-            # Do NOT update hashes here. Only update after successful test run.
-            # update_hashes()
         except Exception as e:
             logger.error(f"Failed to regenerate graph: {e}")
             if mode == "affected":
@@ -140,8 +171,8 @@ def main(
             tests_to_run = ["tests/"]
         else:
             try:
-                result = get_affected_tests(since, staged)
-                tests_to_run = result["tests"]
+                affected_data = get_affected_tests(since, staged)
+                tests_to_run = affected_data["tests"]
 
                 if not tests_to_run:
                     logger.info("No affected tests found. Everything looks good! ✨")
@@ -156,6 +187,15 @@ def main(
                 logger.warning("Falling back to ALL tests.")
                 tests_to_run = ["tests/"]
 
+    if json_output:
+        result_data = (
+            get_affected_tests(since, staged)
+            if mode == "affected"
+            else {"tests": tests_to_run}
+        )
+        print(json.dumps(result_data, indent=2))
+        raise typer.Exit(0)
+
     if dry_run:
         print("Dry run. Would execute:")
         print(f"pytest {' '.join(extra_pytest_args)} {' '.join(tests_to_run)}")
@@ -166,12 +206,21 @@ def main(
     # If list is huge with 'all', ideally we pass 'tests/' directory.
     # tests_to_run handles this (list of files OR ['tests/']).
 
-    try:
-        run_pytest(tests_to_run, extra_pytest_args)
+    # Track whether this is a full run (safe to update all hashes)
+    is_full_run = first_run or mode == "all"
 
-        # If successful and not dry run, update hashes
-        if not dry_run:
+    try:
+        tests_ran = run_pytest(tests_to_run, extra_pytest_args)
+
+        # Only update hashes when tests actually ran
+        # Bug #3: Only update hashes on full runs to avoid masking
+        # changes to files whose tests weren't in the affected set
+        if tests_ran and not dry_run and is_full_run:
             update_hashes()
+        elif tests_ran and not dry_run:
+            logger.debug(
+                "Partial test run — skipping hash update to avoid masking changes."
+            )
 
     except subprocess.CalledProcessError as e:
         logger.error("Tests failed.")

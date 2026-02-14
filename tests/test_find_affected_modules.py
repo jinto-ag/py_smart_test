@@ -264,3 +264,120 @@ def test_main_output(mock_paths, monkeypatch):
     result = runner.invoke(find_affected_modules.app)
     assert result.exit_code == 0
     assert "test.py" in result.stdout
+
+
+# ── Working Tree Changes tests ───────────────────────────────────────────────
+
+
+def test_get_working_tree_changes_success(monkeypatch):
+    import subprocess
+
+    from py_smart_test import find_affected_modules
+
+    def mock_run(cmd, **kwargs):
+        return subprocess.CompletedProcess(
+            cmd,
+            0,
+            stdout=" M src/pkg/a.py\n?? tests/test_new.py\n M README.md\n",
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    files = find_affected_modules.get_working_tree_changes()
+
+    # Only .py files returned
+    paths = [f.as_posix() for f in files]
+    assert "src/pkg/a.py" in paths
+    assert "tests/test_new.py" in paths
+    assert "README.md" not in paths
+
+
+def test_get_working_tree_changes_renames(monkeypatch):
+    import subprocess
+
+    from py_smart_test import find_affected_modules
+
+    def mock_run(cmd, **kwargs):
+        return subprocess.CompletedProcess(
+            cmd,
+            0,
+            stdout="R  old_name.py -> new_name.py\n",
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    files = find_affected_modules.get_working_tree_changes()
+    assert len(files) == 1
+    assert files[0].name == "new_name.py"
+
+
+def test_get_working_tree_changes_empty(monkeypatch):
+    import subprocess
+
+    from py_smart_test import find_affected_modules
+
+    def mock_run(cmd, **kwargs):
+        return subprocess.CompletedProcess(cmd, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    files = find_affected_modules.get_working_tree_changes()
+    assert files == []
+
+
+def test_get_working_tree_changes_git_error(monkeypatch):
+    import subprocess
+    from unittest.mock import MagicMock
+
+    from py_smart_test import find_affected_modules
+
+    def mock_run(*args, **kwargs):
+        raise subprocess.CalledProcessError(128, "git status")
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+
+    mock_hash_fallback = MagicMock(return_value=[Path("fallback.py")])
+    monkeypatch.setattr(
+        "py_smart_test.find_affected_modules.get_changed_files_hash", mock_hash_fallback
+    )
+
+    files = find_affected_modules.get_working_tree_changes()
+    assert mock_hash_fallback.called
+    assert files == [Path("fallback.py")]
+
+
+def test_get_working_tree_changes_blank_lines(monkeypatch):
+    import subprocess
+
+    from py_smart_test import find_affected_modules
+
+    def mock_run(cmd, **kwargs):
+        return subprocess.CompletedProcess(
+            cmd,
+            0,
+            stdout=" M foo.py\n\n   \n M bar.py\n",
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", mock_run)
+    files = find_affected_modules.get_working_tree_changes()
+    assert len(files) == 2
+
+
+def test_main_cli_json_output(monkeypatch):
+    from typer.testing import CliRunner
+
+    from py_smart_test import find_affected_modules
+
+    # Mock get_affected_tests
+    monkeypatch.setattr(
+        find_affected_modules,
+        "get_affected_tests",
+        lambda *a: {"affected_modules": ["a"], "tests": ["t"]},
+    )
+    runner = CliRunner()
+    result = runner.invoke(find_affected_modules.app, ["--json"])
+    assert result.exit_code == 0
+    # Parse JSON to verify
+    data = json.loads(result.stdout)
+    assert data["affected_modules"] == ["a"]
+    assert data["tests"] == ["t"]
