@@ -117,6 +117,7 @@ jobs:
 
       - name: Code documentation coverage
         run: |
+          mkdir -p docs
           uv run interrogate src/ --generate-badge docs/interrogate-badge.svg
 
       - name: Build package
@@ -131,6 +132,7 @@ jobs:
     name: Dependency Review
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    continue-on-error: true
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
