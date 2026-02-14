@@ -13,6 +13,9 @@ from pathlib import Path
 
 import pytest
 
+# Resolve the project root so we can install py-smart-test from local source.
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
 pytestmark = pytest.mark.e2e
 
 
@@ -100,6 +103,47 @@ class TestSmartMode:
             # Restore original to keep fixture clean for other tests
             math_file.write_text(original)
 
+    def test_smart_regenerates_missing_graph(self, sample_project: Path) -> None:
+        """When dependency graph is missing, --smart should regenerate it."""
+        # Remove the dependency graph to simulate missing graph
+        graph_file = sample_project / ".py_smart_test" / "dependency_graph.json"
+        if graph_file.exists():
+            graph_file.unlink()
+
+        # Modify a source file to have some changes
+        math_file = sample_project / "src" / "mylib" / "math_utils.py"
+        original = math_file.read_text()
+
+        try:
+            # Append a new function (unstaged change)
+            math_file.write_text(
+                original
+                + textwrap.dedent(
+                    """\
+
+                def subtract(a: int, b: int) -> int:
+                    return a - b
+                """
+                )
+            )
+
+            result = _uv_pytest(
+                sample_project,
+                "--smart",
+                "--smart-working-tree",
+                "-v",
+                check=False,
+            )
+            # Should succeed and regenerate the graph
+            assert result.returncode in (0, 5)
+            # Should see regeneration message in output
+            assert "Dependency graph is stale, regenerating" in result.stderr
+            # Graph should be recreated
+            assert graph_file.exists()
+        finally:
+            # Restore original to keep fixture clean for other tests
+            math_file.write_text(original)
+
 
 class TestSmartFirstMode:
     """Verify ``--smart-first`` keeps all tests but reorders."""
@@ -139,3 +183,98 @@ class TestSmartStaged:
         )
         # Exit 0 or 5 (no tests selected) are both valid
         assert result.returncode in (0, 5)
+
+
+class TestSmartNoCollect:
+    """Verify ``--smart-no-collect`` works the same as ``--smart``."""
+
+    def test_smart_no_collect_equivalent(self, sample_project: Path) -> None:
+        """--smart-no-collect should behave identically to --smart."""
+        # Test with no changes - both should deselect everything
+        result_smart = _uv_pytest(sample_project, "--smart", "-v", check=False)
+        result_no_collect = _uv_pytest(
+            sample_project, "--smart-no-collect", "-v", check=False
+        )
+
+        # Both should have same exit codes and behavior
+        assert result_smart.returncode == result_no_collect.returncode
+        assert ("deselected" in result_smart.stdout) == (
+            "deselected" in result_no_collect.stdout
+        )
+
+
+class TestErrorConditions:
+    """Test error handling and edge cases."""
+
+    def test_smart_with_no_source_files(self, tmp_path: Path) -> None:
+        """Test behavior when project has no source files."""
+        # Create a minimal project with no source code
+        project = tmp_path / "empty_project"
+        project.mkdir()
+
+        # Basic pyproject.toml
+        (project / "pyproject.toml").write_text(
+            textwrap.dedent(
+                """\
+                [project]
+                name = "empty-test"
+                version = "0.1.0"
+                requires-python = ">=3.11"
+                dependencies = ["py-smart-test"]
+
+                [tool.pytest.ini_options]
+                testpaths = ["tests"]
+                """
+            )
+        )
+
+        # Empty tests directory
+        (project / "tests").mkdir()
+        (project / "tests" / "__init__.py").touch()
+
+        # Initialize git
+        subprocess.run(["git", "init"], cwd=project, check=True)
+        subprocess.run(["git", "config", "user.email", "test@test.com"], cwd=project)
+        subprocess.run(["git", "config", "user.name", "Test"], cwd=project)
+        subprocess.run(["git", "add", "-A"], cwd=project, check=True)
+        subprocess.run(["git", "commit", "-m", "initial"], cwd=project, check=True)
+
+        # Install py-smart-test
+        subprocess.run(
+            ["uv", "add", "--dev", str(_PROJECT_ROOT), "pytest"],
+            cwd=project,
+            check=True,
+        )
+
+        # Run smart - should handle gracefully
+        result = subprocess.run(
+            ["uv", "run", "pytest", "--smart", "-v"],
+            cwd=project,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        # Should not crash, may exit with 0 or 5
+        assert result.returncode in (0, 5)
+
+    def test_smart_with_syntax_error(self, sample_project: Path) -> None:
+        """Test behavior when source files have syntax errors."""
+        math_file = sample_project / "src" / "mylib" / "math_utils.py"
+        original = math_file.read_text()
+
+        try:
+            # Introduce a syntax error
+            math_file.write_text(
+                "def broken_function(\n    return 1"
+            )  # Missing closing paren
+
+            result = _uv_pytest(
+                sample_project, "--smart", "--smart-working-tree", check=False
+            )
+            # pytest fails with exit code 2 due to collection errors from syntax errors
+            # But the smart plugin handles syntax errors gracefully during generation
+            assert result.returncode == 2  # pytest collection error
+            # Should see syntax error warning in stderr
+            assert "Syntax error in" in result.stderr
+        finally:
+            math_file.write_text(original)
