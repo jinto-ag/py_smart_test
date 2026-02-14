@@ -42,6 +42,11 @@ def test_smart_runner_affected(monkeypatch):
 
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
 
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
+
     # Mock get_affected_tests
     def mock_get_affected(since, staged):
         return {"tests": ["tests/test_foo.py"]}
@@ -67,6 +72,11 @@ def test_smart_runner_affected_fallback(monkeypatch):
 
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
 
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
+
     # Mock get_affected_tests to raise exception
     def mock_get_affected_fail(since, staged):
         raise Exception("Git error")
@@ -83,9 +93,20 @@ def test_smart_runner_affected_fallback(monkeypatch):
 
 
 def test_smart_runner_graph_regen(monkeypatch):
-    mock_run = MagicMock()
-    monkeypatch.setattr(smart_test_runner.subprocess, "run", mock_run)
+    # Mock subprocess.Popen (run_pytest uses Popen, not run)
+    mock_popen = MagicMock()
+    mock_process = MagicMock()
+    mock_process.stdout = None
+    mock_process.wait.return_value = 0
+    mock_popen.return_value = mock_process
+    monkeypatch.setattr(smart_test_runner.subprocess, "Popen", mock_popen)
+
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: True)
+
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
 
     # Mock generate and mapper
     mock_gen = MagicMock()
@@ -108,6 +129,11 @@ def test_smart_runner_graph_regen(monkeypatch):
 
 def test_smart_runner_no_tests(monkeypatch):
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
+
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
 
     # Mock get_affected returning empty
     monkeypatch.setattr(
@@ -137,6 +163,9 @@ def test_smart_runner_subprocess_error(monkeypatch):
     mock_popen.return_value = mock_process
     monkeypatch.setattr(smart_test_runner.subprocess, "Popen", mock_popen)
 
+    # Mock is_graph_stale to prevent actual graph operations
+    monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
+
     result = runner.invoke(smart_test_runner.app, ["--mode", "all"])
     assert result.exit_code == 1
 
@@ -152,6 +181,12 @@ def test_smart_runner_updates_hashes_on_success(monkeypatch):
 
     # Mock everything to simulate success
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
+
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
+
     monkeypatch.setattr(
         smart_test_runner, "get_affected_tests", lambda *a: {"tests": ["t.py"]}
     )
@@ -173,6 +208,12 @@ def test_smart_runner_does_not_update_hashes_on_failure(monkeypatch):
     from py_smart_test import smart_test_runner
 
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: False)
+
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
+
     monkeypatch.setattr(
         smart_test_runner, "get_affected_tests", lambda *a: {"tests": ["t.py"]}
     )
@@ -214,6 +255,11 @@ def test_regenerate_graph_failure(monkeypatch, caplog):
 
     # Mock graph stale
     monkeypatch.setattr(smart_test_runner, "is_graph_stale", lambda: True)
+
+    # Mock HASH_FILE.exists() to True so first-run path is not triggered
+    monkeypatch.setattr(
+        smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
+    )
 
     # Mock generation failure
     def mock_gen():
