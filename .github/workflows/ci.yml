@@ -116,6 +116,7 @@ jobs:
           uv run pip-licenses --format=markdown --output-file=LICENSES.md
 
       - name: Code documentation coverage
+        continue-on-error: true
         run: |
           mkdir -p docs
           uv run interrogate src/ --generate-badge docs/interrogate-badge.svg

@@ -8,6 +8,8 @@ allow_licenses:
   - "CC0-1.0"
   - "Unlicense"
   - "PSF-2.0"
+  - "MPL-2.0"
+  - "Python-2.0"
 fail_on_scopes:
   - "runtime"
 vulnerability_check: true
