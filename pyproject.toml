@@ -9,21 +9,28 @@ requires-python = ">=3.11"
 dependencies = ["pydantic>=2.12.5", "typer>=0.9.0"]
 
 [project.scripts]
+# Primary CLI
 py-smart-test = "py_smart_test.smart_test_runner:app"
-py-smart-test-graph-gen = "py_smart_test.generate_dependency_graph:main"
-py-smart-test-map-tests = "py_smart_test.test_module_mapper:main"
-py-smart-test-affected = "py_smart_test.find_affected_modules:app"
-py-smart-test-stale = "py_smart_test.detect_graph_staleness:main"
-# Short aliases
-pst = "py_smart_test.smart_test_runner:app"
-pst-gen = "py_smart_test.generate_dependency_graph:main"
-pst-map = "py_smart_test.test_module_mapper:main"
+# Short aliases (preferred)
+pst       = "py_smart_test.smart_test_runner:app"
+pst-gen   = "py_smart_test.generate_dependency_graph:main"
+pst-map   = "py_smart_test.test_module_mapper:main"
 pst-affected = "py_smart_test.find_affected_modules:app"
 pst-stale = "py_smart_test.detect_graph_staleness:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[project.entry-points."pytest11"]
+py_smart_test = "py_smart_test.pytest_plugin"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-m 'not e2e'"
+markers = [
+    "e2e: end-to-end tests (run with: pytest -m e2e)",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/py_smart_test"]

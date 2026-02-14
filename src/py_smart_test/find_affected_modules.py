@@ -43,6 +43,37 @@ def get_changed_files(base_ref: str = "main", staged: bool = False) -> List[Path
         return get_changed_files_hash()
 
 
+def get_working_tree_changes() -> List[Path]:
+    """Detect unstaged and untracked files using ``git status --porcelain``.
+
+    This mirrors pytest-picked's default mode — ideal for active development
+    where changes haven't been staged or committed yet.
+    """
+    cmd = ["git", "status", "--porcelain"]
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, check=True, cwd=_paths.REPO_ROOT
+        )
+        files: List[Path] = []
+        for line in result.stdout.splitlines():
+            if not line.strip():
+                continue
+            # porcelain format: XY filename  (or XY old -> new for renames)
+            file_path = line[3:].strip()
+            # Handle renames (old -> new)
+            if " -> " in file_path:
+                file_path = file_path.split(" -> ")[-1]
+            # Only include .py files
+            if file_path.endswith(".py"):
+                files.append(Path(file_path))
+        return files
+    except subprocess.CalledProcessError as e:
+        logger.warning(
+            f"git status failed ({e}). Falling back to hash-based detection."
+        )
+        return get_changed_files_hash()
+
+
 def get_transitive_dependents(graph: Dict[str, Any], modules: Set[str]) -> Set[str]:
     """
     Return set of modules that depend on the given modules (transitively).
