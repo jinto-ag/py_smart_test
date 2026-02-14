@@ -1,0 +1,19 @@
+title: Q&A
+labels: ["question"]
+body:
+  - type: input
+    id: question_title
+    attributes:
+      label: Question Title
+      description: A short title for your question
+      placeholder: "How do I...?"
+    validations:
+      required: true
+  - type: textarea
+    id: question_body
+    attributes:
+      label: Question
+      description: Ask your question
+      placeholder: "I'm trying to... but I'm getting..."
+    validations:
+      required: true

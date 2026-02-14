@@ -83,13 +83,13 @@ py-smart-test --mode all  # or: pst --mode all
 
 For convenience, short aliases are available for all commands:
 
-| Full Command | Alias | Purpose |
-|-------------|-------|---------|
-| `py-smart-test` | `pst` | Smart test runner |
-| `py-smart-test-graph-gen` | `pst-gen` | Generate dependency graph |
-| `py-smart-test-map-tests` | `pst-map` | Test module mapping |
-| `py-smart-test-affected` | `pst-affected` | Find affected modules |
-| `py-smart-test-stale` | `pst-stale` | Check graph staleness |
+| Full Command              | Alias          | Purpose                   |
+| ------------------------- | -------------- | ------------------------- |
+| `py-smart-test`           | `pst`          | Smart test runner         |
+| `py-smart-test-graph-gen` | `pst-gen`      | Generate dependency graph |
+| `py-smart-test-map-tests` | `pst-map`      | Test module mapping       |
+| `py-smart-test-affected`  | `pst-affected` | Find affected modules     |
+| `py-smart-test-stale`     | `pst-stale`    | Check graph staleness     |
 
 ## �💻 Usage
 
@@ -188,7 +188,7 @@ For CI/CD pipelines, you can use the `--mode all` flag to run full test suites:
 
 ### Core Components
 
-```
+```text
 src/py_smart_test/
 ├── smart_test_runner.py      # Main CLI orchestrator
 ├── detect_graph_staleness.py # Graph freshness detection
@@ -210,7 +210,7 @@ src/py_smart_test/
 
 ### Storage Structure
 
-```
+```text
 .py_smart_test/
 ├── dependency_graph.json     # Import dependency graph
 ├── file_hashes.json         # File hash snapshots
@@ -325,6 +325,7 @@ mypy src/
 This project uses [Conventional Commits](https://conventionalcommits.org/) for commit messages. Pre-commit hooks will validate commit messages automatically.
 
 **Format:**
+
 ```
 <type>[optional scope]: <description>
 
@@ -334,6 +335,7 @@ This project uses [Conventional Commits](https://conventionalcommits.org/) for c
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -347,6 +349,7 @@ This project uses [Conventional Commits](https://conventionalcommits.org/) for c
 - `revert`: Revert changes
 
 **Examples:**
+
 ```bash
 feat: add smart test detection for changed files
 fix: resolve circular import in dependency graph
@@ -358,6 +361,7 @@ docs: update installation instructions
 This project uses [Commitizen](https://commitizen-tools.github.io/commitizen/) for version management and [git-cliff](https://git-cliff.org/) for changelog generation.
 
 **Creating a new release:**
+
 ```bash
 # Update version and generate changelog
 uv run cz bump
@@ -367,6 +371,7 @@ uv run cz bump --dry-run
 ```
 
 **Manual changelog generation:**
+
 ```bash
 # Generate changelog from conventional commits
 uv run git-cliff --latest --strip=all > CHANGELOG.md
@@ -422,19 +427,9 @@ uv run git-cliff --latest --strip=all > CHANGELOG.md
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Make your changes with tests
-4. Run quality checks: `python-verify --paths=src`
-5. Submit a pull request
+We welcome contributions! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details on how to get started, our development workflow, and the PR process.
 
-### Development Guidelines
-
-- Follow PEP 8 style guidelines
-- Add type hints for all functions
-- Write comprehensive tests
-- Update documentation for new features
-- Ensure all tests pass before submitting
+Please also note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 ## 📄 License
 

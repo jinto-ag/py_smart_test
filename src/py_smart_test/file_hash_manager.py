@@ -105,11 +105,9 @@ def get_changed_files_hash() -> List[Path]:
             logger.debug(f"File modified: {path}")
             changed.append(Path(path))
 
-            # Check for deleted files
-            # Note: Deleted files are tricky for "affected" logic because we cannot
-            # scan them for imports.
-            # However, find_affected_modules logic attempts to handle deleted files
-            # by path inference.
+    # Check for deleted files (in old but not in new)
+    for path in old_hashes:
+        if path not in new_hashes:
             logger.debug(f"File deleted: {path}")
             changed.append(Path(path))
 
