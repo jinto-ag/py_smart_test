@@ -1,0 +1,103 @@
+[project]
+name = "py-smart-test"
+version = "1.0.0"
+description = "Development, testing, and dependency analysis tools for Python projects."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Jinto AG", email = "project.jintoag@gmail.com" }]
+requires-python = ">=3.13"
+dependencies = ["pydantic>=2.12.5", "typer>=0.9.0"]
+
+[project.scripts]
+py-smart-test = "py_smart_test.smart_test_runner:app"
+py-smart-test-graph-gen = "py_smart_test.generate_dependency_graph:main"
+py-smart-test-map-tests = "py_smart_test.test_module_mapper:main"
+py-smart-test-affected = "py_smart_test.find_affected_modules:app"
+py-smart-test-stale = "py_smart_test.detect_graph_staleness:main"
+# Short aliases
+pst = "py_smart_test.smart_test_runner:app"
+pst-gen = "py_smart_test.generate_dependency_graph:main"
+pst-map = "py_smart_test.test_module_mapper:main"
+pst-affected = "py_smart_test.find_affected_modules:app"
+pst-stale = "py_smart_test.detect_graph_staleness:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/py_smart_test"]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.38.0",
+    "black>=26.1.0",
+    "commitizen>=4.1.0",
+    "coverage>=7.13.4",
+    "flake8>=7.3.0",
+    "git-cliff>=2.6.1",
+    "interrogate>=1.7.0",
+    "isort>=7.0.0",
+    "mypy>=1.19.1",
+    "pip-licenses>=5.5.1",
+    "pre-commit>=4.0.1",
+    "pyflakes>=3.4.0",
+    "pylance>=2.0.1",
+    "pyright>=1.1.408",
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "ruff>=0.15.1",
+]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.0.0"
+tag_format = "v$version"
+changelog_file = "CHANGELOG.md"
+update_changelog_on_bump = true
+major_version_zero = true
+
+[tool.commitizen.customize]
+message_template = "{{change_type}}{{scope}}: {{message}}\n\n{{body}}"
+schema_pattern = "(?s)(build|ci|docs|feat|fix|perf|refactor|style|test|chore|revert)(\\((?P<scope>[\\w\\-]+)\\))?!?(?P<breaking>!)?:\\s(?P<subject>[\\w\\s]+)(?:\\n\\n(?P<body>.*))?"
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "change_type"
+message = "Select the type of change you are committing"
+choices = [
+    { value = "feat", name = "✨ feat: A new feature" },
+    { value = "fix", name = "🐛 fix: A bug fix" },
+    { value = "docs", name = "📚 docs: Documentation only changes" },
+    { value = "style", name = "💅 style: Changes that do not affect the meaning of the code" },
+    { value = "refactor", name = "🔄 refactor: A code change that neither fixes a bug nor adds a feature" },
+    { value = "perf", name = "⚡ perf: A code change that improves performance" },
+    { value = "test", name = "🧪 test: Adding missing or correcting existing tests" },
+    { value = "build", name = "🏗️ build: Changes that affect the build system or external dependencies" },
+    { value = "ci", name = "👷 ci: Changes to CI configuration files and scripts" },
+    { value = "chore", name = "🔧 chore: Other changes that don't modify src or test files" },
+    { value = "revert", name = "⏪ revert: Revert to a commit" }
+]
+
+[[tool.commitizen.customize.questions]]
+type = "list"
+name = "scope"
+message = "Select the scope of this change"
+choices = [
+    { value = "core", name = "core: Core functionality and main logic" },
+    { value = "deps", name = "deps: Dependency graph and analysis" },
+    { value = "test", name = "test: Testing functionality and test runner" },
+    { value = "config", name = "config: Configuration and setup files" },
+    { value = "ci", name = "ci: CI/CD and development tooling" },
+    { value = "docs", name = "docs: Documentation and README" }
+]
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "message"
+message = "Write a short, imperative tense description of the change"
+
+[[tool.commitizen.customize.questions]]
+type = "input"
+name = "body"
+message = "Provide a longer description of the change (optional)"

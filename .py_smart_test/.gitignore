@@ -1,0 +1,5 @@
+# Generated files - do not commit
+dependency_graph.json
+file_hashes.json
+cache/
+logs/
