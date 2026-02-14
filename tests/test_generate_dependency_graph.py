@@ -45,7 +45,7 @@ def test_syntax_error_handling(temp_repo_root, monkeypatch, mock_paths):
     bad_file = temp_repo_root / "src" / "py_smart_test" / "bad.py"
     bad_file.write_text("def broken(")
 
-    scan_and_build_graph(temp_repo_root / "src" / "py_smart_test")
+    scan_and_build_graph(temp_repo_root / "src")
 
     assert any("Syntax error" in str(c) for c in mock_logger.warning.call_args_list)
 
@@ -74,26 +74,24 @@ def test_resolve_relative_too_deep():
 
 
 def test_scan_and_build_graph(temp_repo_root, mock_paths):
-    src = mock_paths.SRC_ROOT
-    # src is .../src/py_smart_test
-    # But scan_and_build_graph uses src.parent (.../src) as root
-    # So we should create files matching 'py_smart_test' package structure
+    # SRC_ROOT is now src/, package is under src/py_smart_test/
+    pkg = temp_repo_root / "src" / "py_smart_test"
 
     # Ensure package init
-    (src / "__init__.py").touch()
+    (pkg / "__init__.py").touch()
 
     # core/base.py
-    (src / "core").mkdir()
-    (src / "core" / "__init__.py").touch()
-    base_py = src / "core" / "base.py"
+    (pkg / "core").mkdir()
+    (pkg / "core" / "__init__.py").touch()
+    base_py = pkg / "core" / "base.py"
     base_py.write_text("import os\nclass Base: pass")
 
     # core/utils.py
-    utils_py = src / "core" / "utils.py"
+    utils_py = pkg / "core" / "utils.py"
     utils_py.write_text("from .base import Base\nimport json")
 
     # main.py
-    main_py = src / "main.py"
+    main_py = pkg / "main.py"
     main_py.write_text("from py_smart_test.core.utils import Base\nimport sys")
 
     # Run scan

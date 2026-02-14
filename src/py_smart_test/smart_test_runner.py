@@ -81,7 +81,9 @@ def run_pytest(tests: List[str], extra_args: List[str]):
 @app.command()
 def main(
     mode: str = typer.Option("affected", help="Mode: 'affected' or 'all'"),
-    since: str = typer.Option("main", help="Git base reference for changes"),
+    since: str = typer.Option(
+        _paths.DEFAULT_BRANCH, help="Git base reference for changes"
+    ),
     staged: bool = typer.Option(False, help="Check staged changes only"),
     regenerate_graph: bool = typer.Option(
         False, help="Force regenerate dependency graph"

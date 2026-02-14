@@ -77,7 +77,7 @@ choices = [
     { value = "build", name = "🏗️ build: Changes that affect the build system or external dependencies" },
     { value = "ci", name = "👷 ci: Changes to CI configuration files and scripts" },
     { value = "chore", name = "🔧 chore: Other changes that don't modify src or test files" },
-    { value = "revert", name = "⏪ revert: Revert to a commit" }
+    { value = "revert", name = "⏪ revert: Revert to a commit" },
 ]
 
 [[tool.commitizen.customize.questions]]
@@ -90,7 +90,7 @@ choices = [
     { value = "test", name = "test: Testing functionality and test runner" },
     { value = "config", name = "config: Configuration and setup files" },
     { value = "ci", name = "ci: CI/CD and development tooling" },
-    { value = "docs", name = "docs: Documentation and README" }
+    { value = "docs", name = "docs: Documentation and README" },
 ]
 
 [[tool.commitizen.customize.questions]]
