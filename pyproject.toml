@@ -1,6 +1,6 @@
 [project]
 name = "py-smart-test"
-version = "1.1.0"
+version = "1.1.1"
 description = "Development, testing, and dependency analysis tools for Python projects."
 readme = "README.md"
 license = { text = "MIT" }
