@@ -39,6 +39,7 @@ dev = [
     "interrogate>=1.7.0",
     "isort>=7.0.0",
     "mypy>=1.19.1",
+    "pip-audit>=2.10.0",
     "pip-licenses>=5.5.1",
     "pre-commit>=4.0.1",
     "pyflakes>=3.4.0",
