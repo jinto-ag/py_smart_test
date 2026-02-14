@@ -22,8 +22,11 @@ from typing import Any, Generator, List, Set
 import pytest
 
 from . import _paths  # noqa: E402
+from .detect_graph_staleness import is_graph_stale  # noqa: E402
 from .find_affected_modules import get_affected_tests  # noqa: E402
 from .find_affected_modules import get_working_tree_changes
+from .generate_dependency_graph import main as generate_graph_main  # noqa: E402
+from .test_module_mapper import main as mapper_main  # noqa: E402
 from .test_outcome_store import load_failed_tests  # noqa: E402
 from .test_outcome_store import Outcome, load_test_durations, save_outcomes
 from .test_prioritizer import prioritize_tests  # noqa: E402
@@ -87,6 +90,17 @@ def pytest_collection_modifyitems(
 
     if not smart and not smart_first:
         return
+
+    # Regenerate graph if stale
+    if is_graph_stale():
+        logger.info("Dependency graph is stale, regenerating...")
+        try:
+            generate_graph_main()
+            mapper_main()
+        except Exception as e:
+            logger.error(f"Failed to regenerate dependency graph: {e}")
+            # Fall back to running all tests
+            return
 
     # Determine which files changed
     since = config.getoption("--smart-since") or _paths.DEFAULT_BRANCH

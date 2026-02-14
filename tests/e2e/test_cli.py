@@ -8,9 +8,13 @@ from __future__ import annotations
 
 import os
 import subprocess
+import textwrap
 from pathlib import Path
 
 import pytest
+
+# Resolve the project root so we can install py-smart-test from local source.
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 pytestmark = pytest.mark.e2e
 
@@ -111,4 +115,42 @@ class TestPstStale:
     def test_stale_check(self, sample_project: Path) -> None:
         result = _run_cli(sample_project, "pst-stale", check=False)
         # May exit 0 or 1 depending on staleness — just verify it runs
+        assert result.returncode in (0, 1)
+
+
+class TestCliErrorConditions:
+    """Test CLI error handling."""
+
+    def test_pst_affected_with_missing_graph(self, tmp_path: Path) -> None:
+        """Test pst-affected when no graph exists."""
+        project = tmp_path / "no_graph_project"
+        project.mkdir()
+
+        # Create minimal project
+        (project / "pyproject.toml").write_text(
+            textwrap.dedent(
+                """\
+                [project]
+                name = "no-graph-test"
+                version = "0.1.0"
+                requires-python = ">=3.11"
+                dependencies = ["py-smart-test"]
+                """
+            )
+        )
+
+        # Install py-smart-test
+        subprocess.run(
+            ["uv", "add", "--dev", str(_PROJECT_ROOT)], cwd=project, check=True
+        )
+
+        # Run pst-affected without graph
+        result = subprocess.run(
+            ["uv", "run", "pst-affected"],
+            cwd=project,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        # Should handle gracefully (may exit with error or show empty results)
         assert result.returncode in (0, 1)

@@ -1,0 +1,51 @@
+{
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_option_registered",
+    "status": "passed",
+    "duration": 0.00011665999954857398,
+    "timestamp": 1771095686.6429126,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_first_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_first_option_registered",
+    "status": "passed",
+    "duration": 6.529900019813795e-05,
+    "timestamp": 1771095686.6429164,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_since_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_since_option_registered",
+    "status": "passed",
+    "duration": 5.928900100116152e-05,
+    "timestamp": 1771095686.6429186,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_staged_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_staged_option_registered",
+    "status": "passed",
+    "duration": 9.573899842507672e-05,
+    "timestamp": 1771095686.64292,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_working_tree_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_working_tree_option_registered",
+    "status": "passed",
+    "duration": 6.253500032471493e-05,
+    "timestamp": 1771095686.6429214,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_no_collect_option_registered": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_no_collect_option_registered",
+    "status": "passed",
+    "duration": 8.612599958723877e-05,
+    "timestamp": 1771095686.642923,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_is_false": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_is_false",
+    "status": "failed",
+    "duration": 0.00020901900097669568,
+    "timestamp": 1771095686.642924,
+    "error_message": null
+  }
+}
