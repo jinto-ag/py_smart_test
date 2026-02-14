@@ -7,7 +7,7 @@ import typer  # type: ignore
 
 from . import _paths
 from .detect_graph_staleness import is_graph_stale
-from .file_hash_manager import update_hashes
+from .file_hash_manager import HASH_FILE, update_hashes
 from .find_affected_modules import get_affected_tests
 from .generate_dependency_graph import main as generate_graph_main
 from .test_module_mapper import main as mapper_main
@@ -100,15 +100,18 @@ def main(
     log_file = setup_logging()
     logger.info(f"Logging run to {log_file}")
 
+    # Check for first run / missing history
+    # If no hash file exists, we consider this a fresh state.
+    first_run = not HASH_FILE.exists()
+
     # 1. Regenerate graph if needed
     if regenerate_graph or is_graph_stale():
         logger.info("Regenerating dependency graph...")
         try:
             generate_graph_main()
             mapper_main()
-            # Update hashes immediately to mark this state as "clean"
-            # regarding the new graph
-            update_hashes()
+            # Do NOT update hashes here. Only update after successful test run.
+            # update_hashes()
         except Exception as e:
             logger.error(f"Failed to regenerate graph: {e}")
             if mode == "affected":
@@ -129,22 +132,29 @@ def main(
         tests_to_run = ["tests/"]
 
     elif mode == "affected":
-        try:
-            result = get_affected_tests(since, staged)
-            tests_to_run = result["tests"]
-
-            if not tests_to_run:
-                logger.info("No affected tests found. Everything looks good! ✨")
-                raise typer.Exit(0)
-
-            logger.info(f"Identified {len(tests_to_run)} affected tests.")
-
-        except typer.Exit:
-            raise
-        except Exception as e:
-            logger.error(f"Error determining affected tests: {e}")
-            logger.warning("Falling back to ALL tests.")
+        # Force full run on first execution
+        if first_run:
+            logger.warning(
+                "No execution history found. Running ALL tests to establish baseline."
+            )
             tests_to_run = ["tests/"]
+        else:
+            try:
+                result = get_affected_tests(since, staged)
+                tests_to_run = result["tests"]
+
+                if not tests_to_run:
+                    logger.info("No affected tests found. Everything looks good! ✨")
+                    raise typer.Exit(0)
+
+                logger.info(f"Identified {len(tests_to_run)} affected tests.")
+
+            except typer.Exit:
+                raise
+            except Exception as e:
+                logger.error(f"Error determining affected tests: {e}")
+                logger.warning("Falling back to ALL tests.")
+                tests_to_run = ["tests/"]
 
     if dry_run:
         print("Dry run. Would execute:")

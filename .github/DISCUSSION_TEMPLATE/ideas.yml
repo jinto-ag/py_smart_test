@@ -1,0 +1,19 @@
+title: Ideas
+labels: ["idea"]
+body:
+  - type: input
+    id: idea_title
+    attributes:
+      label: Idea Title
+      description: A short title for your idea
+      placeholder: "e.g., Add support for [X]"
+    validations:
+      required: true
+  - type: textarea
+    id: idea_description
+    attributes:
+      label: Description
+      description: Describe your idea in detail.
+      placeholder: "I think it would be great if..."
+    validations:
+      required: true
