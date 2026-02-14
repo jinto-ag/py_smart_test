@@ -63,10 +63,11 @@ def map_tests_to_modules(test_root: Path) -> Dict[str, List[str]]:
         if candidate_suffix in valid_modules:
             matches.append(candidate_suffix)
 
-        # Prefix match
-        prefixed = f"py_smart_test.{candidate_suffix}"
-        if prefixed in valid_modules:
-            matches.append(prefixed)
+        # Prefix match: try each discovered package name
+        for pkg in _paths.PACKAGES:
+            prefixed = f"{pkg}.{candidate_suffix}"
+            if prefixed in valid_modules:
+                matches.append(prefixed)
 
         if matches:
             for m in matches:

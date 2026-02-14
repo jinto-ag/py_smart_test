@@ -50,7 +50,9 @@ def mock_paths(monkeypatch, temp_repo_root):
     from py_smart_test import _paths
 
     monkeypatch.setattr(_paths, "REPO_ROOT", temp_repo_root)
-    monkeypatch.setattr(_paths, "SRC_ROOT", temp_repo_root / "src" / "py_smart_test")
+    monkeypatch.setattr(_paths, "SRC_ROOT", temp_repo_root / "src")
+    monkeypatch.setattr(_paths, "PACKAGES", ["py_smart_test"])
+    monkeypatch.setattr(_paths, "DEFAULT_BRANCH", "main")
     monkeypatch.setattr(_paths, "TEST_ROOT", temp_repo_root / "tests")
     monkeypatch.setattr(_paths, "GRAPH_DIR", temp_repo_root / ".py_smart_test")
     monkeypatch.setattr(

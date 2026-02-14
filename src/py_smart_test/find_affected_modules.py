@@ -85,7 +85,7 @@ def get_affected_tests(
     affected_modules = set()
     direct_test_files = set()
 
-    src_root = _paths.SRC_ROOT.parent
+    src_root = _paths.SRC_ROOT
     valid_modules = set(graph["modules"].keys())
 
     for file_path in changed_files:
@@ -145,7 +145,7 @@ def get_affected_tests(
 
 @app.command()
 def main(
-    base: str = typer.Option("main", help="Git base reference"),
+    base: str = typer.Option(_paths.DEFAULT_BRANCH, help="Git base reference"),
     staged: bool = typer.Option(False, help="Check staged changes only"),
     json_output: bool = typer.Option(False, "--json", help="Output in JSON format"),
 ):

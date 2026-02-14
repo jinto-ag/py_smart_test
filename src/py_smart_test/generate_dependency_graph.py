@@ -72,33 +72,23 @@ def get_module_name(file_path: Path, src_root: Path) -> str:
 
 
 def scan_and_build_graph(src_root: Path) -> Dict[str, Any]:
-    # We scan from src root to get full package names
-    # e.g. REPO/src -> found py_smart_test/...
+    # src_root is the source directory (e.g., REPO/src/) containing packages
     logging.info(f"Scanning modules in {src_root}")
 
     modules_map: Dict[str, Any] = {}
 
-    # Check if src_root has 'py_smart_test' or we are inside it
-    # _paths.SRC_ROOT is .../src/py_smart_test
-    # But files inside import as 'py_smart_test.core...' usually?
-    # Or 'from . import'
-    # Let's assume we want fully qualified names starting with 'py_smart_test'
-    # So we should scan from REPO_ROOT/src
-
-    scan_root = _paths.SRC_ROOT.parent  # .../src
-
-    # Collect all python files
-    all_files = list(scan_root.rglob("*.py"))
+    # Collect all python files under the source directory
+    all_files = list(src_root.rglob("*.py"))
 
     # First pass: map all valid local modules
     valid_modules: Set[str] = set()
     for file_path in all_files:
-        mod_name = get_module_name(file_path, scan_root)
+        mod_name = get_module_name(file_path, src_root)
         valid_modules.add(mod_name)
 
     # Second pass: parse and resolve
     for file_path in all_files:
-        mod_name = get_module_name(file_path, scan_root)
+        mod_name = get_module_name(file_path, src_root)
 
         try:
             tree = ast.parse(
@@ -143,7 +133,7 @@ def scan_and_build_graph(src_root: Path) -> Dict[str, Any]:
 
         modules_map[mod_name] = {
             "imports": sorted(list(set(resolved_imports))),  # dedupe
-            "file": str(file_path.relative_to(_paths.REPO_ROOT)),
+            "file": file_path.relative_to(_paths.REPO_ROOT).as_posix(),
             # We can add "imported_by" later by inverting this list
         }
 
