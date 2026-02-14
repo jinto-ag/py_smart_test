@@ -43,7 +43,7 @@ jobs:
           config-file: ./.github/codeql-config.yml
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v6
+        uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
 
