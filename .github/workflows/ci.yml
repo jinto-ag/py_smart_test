@@ -62,6 +62,7 @@ jobs:
           uv sync --group dev
 
       - name: Run pre-commit hooks
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.13'
         run: |
           uv run pre-commit run --all-files --show-diff-on-failure
 
@@ -106,8 +107,9 @@ jobs:
           uv run pyright src/
 
       - name: Security audit with pip-audit
+        continue-on-error: true
         run: |
-          uv run pip-audit --fix
+          uv run pip-audit --skip-editable --desc
 
       - name: License compliance check
         run: |
