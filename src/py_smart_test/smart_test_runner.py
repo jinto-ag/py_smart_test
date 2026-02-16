@@ -12,6 +12,7 @@ from .file_hash_manager import HASH_FILE, update_hashes
 from .find_affected_modules import get_affected_tests
 from .generate_dependency_graph import main as generate_graph_main
 from .test_module_mapper import main as mapper_main
+from .utils import has_optional_dependency, get_optional_dependency_message
 
 # ... imports ...
 
@@ -67,26 +68,20 @@ def run_pytest(
     
     # Add parallel execution flags if requested
     if parallel:
-        try:
-            import xdist  # noqa: F401
+        if has_optional_dependency("xdist"):
             cmd.extend(["-n", workers])
             logger.info(f"Parallel execution enabled with {workers} workers")
-        except ImportError:
-            logger.warning(
-                "pytest-xdist not found. Install with: pip install pytest-xdist"
-            )
+        else:
+            logger.warning(get_optional_dependency_message("pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
     
     # Add coverage flags if requested
     if coverage:
-        try:
-            import pytest_cov  # noqa: F401
+        if has_optional_dependency("pytest_cov"):
             cmd.extend(["--cov", str(_paths.SRC_ROOT), "--cov-report", "term-missing"])
             logger.info("Coverage reporting enabled")
-        except ImportError:
-            logger.warning(
-                "pytest-cov not found. Install with: pip install pytest-cov"
-            )
+        else:
+            logger.warning(get_optional_dependency_message("pytest-cov"))
             logger.warning("Coverage reporting disabled.")
     
     if tests:

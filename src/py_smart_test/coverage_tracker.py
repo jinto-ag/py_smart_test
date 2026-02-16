@@ -137,7 +137,15 @@ def update_coverage_from_pytest_run(coverage_file: Path) -> None:
         
         for source_file in data.measured_files():
             # Skip non-Python files and test files
-            if not source_file.endswith(".py") or "/tests/" in source_file:
+            if not source_file.endswith(".py"):
+                continue
+                
+            # Check if 'tests' is in the path (cross-platform)
+            try:
+                source_path = Path(source_file)
+                if 'tests' in source_path.parts:
+                    continue
+            except Exception:
                 continue
             
             # Normalize path relative to repo root

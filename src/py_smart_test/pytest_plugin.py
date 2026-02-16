@@ -30,6 +30,7 @@ from .test_module_mapper import main as mapper_main  # noqa: E402
 from .test_outcome_store import load_failed_tests  # noqa: E402
 from .test_outcome_store import Outcome, load_test_durations, save_outcomes
 from .test_prioritizer import prioritize_tests  # noqa: E402
+from .utils import has_optional_dependency, get_optional_dependency_message
 
 logger = logging.getLogger(__name__)
 
@@ -100,10 +101,7 @@ def pytest_configure(config: pytest.Config) -> None:
     """Configure pytest for smart testing with parallel execution."""
     # If --smart-parallel is specified, inject xdist options
     if config.getoption("--smart-parallel", default=False):
-        try:
-            # Check if pytest-xdist is available
-            import xdist  # noqa: F401
-            
+        if has_optional_dependency("xdist"):
             # Get the number of workers
             workers = config.getoption("--smart-parallel-workers", default="auto")
             
@@ -111,27 +109,20 @@ def pytest_configure(config: pytest.Config) -> None:
             if not config.getoption("-n", default=None):
                 config.option.numprocesses = workers
                 logger.info(f"Parallel execution enabled with {workers} workers")
-        except ImportError:
-            logger.warning(
-                "pytest-xdist not found. Install with: pip install pytest-xdist"
-            )
+        else:
+            logger.warning(get_optional_dependency_message("pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
     
     # If --smart-coverage is specified, inject coverage options
     if config.getoption("--smart-coverage", default=False):
-        try:
-            # Check if pytest-cov is available
-            import pytest_cov  # noqa: F401
-            
+        if has_optional_dependency("pytest_cov"):
             # Inject --cov options if not already present
             if not config.getoption("--cov", default=None):
                 # Enable coverage for source code
                 config.option.cov_source = [str(_paths.SRC_ROOT)]
                 logger.info("Coverage tracking enabled")
-        except ImportError:
-            logger.warning(
-                "pytest-cov not found. Install with: pip install pytest-cov"
-            )
+        else:
+            logger.warning(get_optional_dependency_message("pytest-cov"))
             logger.warning("Coverage tracking disabled.")
 
 

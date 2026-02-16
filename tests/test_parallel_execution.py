@@ -64,7 +64,10 @@ class TestParallelExecution:
     def test_run_pytest_parallel_without_xdist(self):
         """Test that run_pytest falls back gracefully when xdist is not installed."""
         with patch("subprocess.Popen") as mock_popen:
-            with patch("builtins.__import__", side_effect=ImportError("No module named 'xdist'")):
+            # Mock has_optional_dependency to return False for xdist
+            with patch("py_smart_test.smart_test_runner.has_optional_dependency") as mock_has_dep:
+                mock_has_dep.return_value = False
+                
                 mock_process = MagicMock()
                 mock_process.stdout = []
                 mock_process.wait.return_value = 0
