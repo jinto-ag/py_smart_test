@@ -110,7 +110,7 @@ def pytest_configure(config: pytest.Config) -> None:
                 config.option.numprocesses = workers
                 logger.info(f"Parallel execution enabled with {workers} workers")
         else:
-            logger.warning(get_optional_dependency_message("pytest-xdist"))
+            logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
     
     # If --smart-coverage is specified, inject coverage options
@@ -122,7 +122,7 @@ def pytest_configure(config: pytest.Config) -> None:
                 config.option.cov_source = [str(_paths.SRC_ROOT)]
                 logger.info("Coverage tracking enabled")
         else:
-            logger.warning(get_optional_dependency_message("pytest-cov"))
+            logger.warning(get_optional_dependency_message("pytest_cov", "pytest-cov"))
             logger.warning("Coverage tracking disabled.")
 
 

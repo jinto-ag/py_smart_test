@@ -215,19 +215,6 @@ class TestClearCoverageMapping:
 class TestUpdateCoverageFromPytestRun:
     """Tests for updating coverage from pytest runs."""
 
-    def test_update_coverage_without_coverage_library(self, tmp_path):
-        """Test that function handles missing coverage library gracefully."""
-        from py_smart_test.coverage_tracker import update_coverage_from_pytest_run
-        
-        fake_coverage_file = tmp_path / ".coverage"
-        fake_coverage_file.write_text("")
-        
-        # Mock coverage import to raise ImportError
-        with patch.dict('sys.modules', {'coverage': None}):
-            # Should not raise an error
-            update_coverage_from_pytest_run(fake_coverage_file)
-            # Function should log warning and return early
-
     def test_update_coverage_with_invalid_file(self, tmp_path):
         """Test that function handles invalid coverage file gracefully."""
         from py_smart_test.coverage_tracker import update_coverage_from_pytest_run

@@ -72,7 +72,7 @@ def run_pytest(
             cmd.extend(["-n", workers])
             logger.info(f"Parallel execution enabled with {workers} workers")
         else:
-            logger.warning(get_optional_dependency_message("pytest-xdist"))
+            logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
     
     # Add coverage flags if requested
@@ -81,7 +81,7 @@ def run_pytest(
             cmd.extend(["--cov", str(_paths.SRC_ROOT), "--cov-report", "term-missing"])
             logger.info("Coverage reporting enabled")
         else:
-            logger.warning(get_optional_dependency_message("pytest-cov"))
+            logger.warning(get_optional_dependency_message("pytest_cov", "pytest-cov"))
             logger.warning("Coverage reporting disabled.")
     
     if tests:
