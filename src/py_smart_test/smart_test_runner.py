@@ -51,13 +51,26 @@ def setup_logging():
     return log_file
 
 
-def run_pytest(tests: List[str], extra_args: List[str]) -> bool:
+def run_pytest(tests: List[str], extra_args: List[str], parallel: bool = False, workers: str = "auto") -> bool:
     """Run pytest with the given tests and extra args.
 
     Returns True if tests were executed successfully, False if no tests to run.
     Raises CalledProcessError if tests fail.
     """
     cmd = ["pytest"] + extra_args
+    
+    # Add parallel execution flags if requested
+    if parallel:
+        try:
+            import xdist  # noqa: F401
+            cmd.extend(["-n", workers])
+            logger.info(f"Parallel execution enabled with {workers} workers")
+        except ImportError:
+            logger.warning(
+                "pytest-xdist not found. Install with: pip install pytest-xdist"
+            )
+            logger.warning("Falling back to sequential execution.")
+    
     if tests:
         cmd.extend(tests)
     else:
@@ -101,6 +114,12 @@ def main(
     json_output: bool = typer.Option(
         False, "--json", help="Output affected tests as JSON and exit (no test run)"
     ),
+    parallel: bool = typer.Option(
+        False, "--parallel", help="Run tests in parallel using pytest-xdist"
+    ),
+    parallel_workers: str = typer.Option(
+        "auto", "--parallel-workers", help="Number of parallel workers (default: auto)"
+    ),
 ):
     """
     Smart test runner.
@@ -116,7 +135,11 @@ def main(
     # When the user runs `pst` with no special flags, we just run
     # `pytest --smart` and let the plugin handle everything.
     use_fast_path = (
-        mode == "affected" and not json_output and not dry_run and not regenerate_graph
+        mode == "affected" 
+        and not json_output 
+        and not dry_run 
+        and not regenerate_graph
+        and not parallel
     )
     if use_fast_path:
         pytest_cmd = ["pytest", "--smart"]
@@ -210,7 +233,7 @@ def main(
     is_full_run = first_run or mode == "all"
 
     try:
-        tests_ran = run_pytest(tests_to_run, extra_pytest_args)
+        tests_ran = run_pytest(tests_to_run, extra_pytest_args, parallel, parallel_workers)
 
         # Only update hashes when tests actually ran
         # Bug #3: Only update hashes on full runs to avoid masking

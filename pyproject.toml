@@ -8,6 +8,11 @@ authors = [{ name = "Jinto AG", email = "project.jintoag@gmail.com" }]
 requires-python = ">=3.11"
 dependencies = ["pydantic>=2.12.5", "typer>=0.9.0"]
 
+[project.optional-dependencies]
+parallel = ["pytest-xdist>=3.0.0"]
+coverage = ["pytest-cov>=4.0.0"]
+all = ["pytest-xdist>=3.0.0", "pytest-cov>=4.0.0"]
+
 [project.scripts]
 # Primary CLI
 py-smart-test = "py_smart_test.smart_test_runner:app"

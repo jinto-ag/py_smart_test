@@ -77,6 +77,39 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Detect changes via git status (unstaged/untracked files).",
     )
+    group.addoption(
+        "--smart-parallel",
+        action="store_true",
+        default=False,
+        help="Run tests in parallel using pytest-xdist (requires pytest-xdist).",
+    )
+    group.addoption(
+        "--smart-parallel-workers",
+        default="auto",
+        help="Number of workers for parallel execution (default: auto).",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Configure pytest for smart testing with parallel execution."""
+    # If --smart-parallel is specified, inject xdist options
+    if config.getoption("--smart-parallel", default=False):
+        try:
+            # Check if pytest-xdist is available
+            import xdist  # noqa: F401
+            
+            # Get the number of workers
+            workers = config.getoption("--smart-parallel-workers", default="auto")
+            
+            # Inject -n option for xdist if not already present
+            if not config.getoption("-n", default=None):
+                config.option.numprocesses = workers
+                logger.info(f"Parallel execution enabled with {workers} workers")
+        except ImportError:
+            logger.warning(
+                "pytest-xdist not found. Install with: pip install pytest-xdist"
+            )
+            logger.warning("Falling back to sequential execution.")
 
 
 def pytest_collection_modifyitems(
