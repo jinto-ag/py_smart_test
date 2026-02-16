@@ -1,9 +1,6 @@
 """Tests for parallel execution feature."""
 
-import subprocess
 from unittest.mock import MagicMock, patch
-
-import pytest
 
 from py_smart_test.smart_test_runner import run_pytest
 
@@ -133,9 +130,9 @@ class TestPytestPluginParallel:
         mock_config.getoption.side_effect = lambda opt, default=None: {
             "--smart-parallel": True,
             "--smart-parallel-workers": "4",
-            "-n": None,
         }.get(opt, default)
         mock_config.option = MagicMock()
+        mock_config.option.numprocesses = None
 
         # Should not raise an error
         pytest_configure(mock_config)

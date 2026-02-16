@@ -1,7 +1,5 @@
 """Tests for utility functions."""
 
-from unittest.mock import patch
-
 from py_smart_test.utils import has_optional_dependency, get_optional_dependency_message
 
 

@@ -4,8 +4,6 @@ import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch, mock_open
 
-import pytest
-
 from py_smart_test.coverage_tracker import (
     load_coverage_mapping,
     save_coverage_mapping,
