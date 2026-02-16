@@ -62,9 +62,11 @@ class TestParallelExecution:
         """Test that run_pytest falls back gracefully when xdist is not installed."""
         with patch("subprocess.Popen") as mock_popen:
             # Mock has_optional_dependency to return False for xdist
-            with patch("py_smart_test.smart_test_runner.has_optional_dependency") as mock_has_dep:
+            with patch(
+                "py_smart_test.smart_test_runner.has_optional_dependency"
+            ) as mock_has_dep:
                 mock_has_dep.return_value = False
-                
+
                 mock_process = MagicMock()
                 mock_process.stdout = []
                 mock_process.wait.return_value = 0
@@ -88,10 +90,7 @@ class TestParallelExecution:
             mock_popen.return_value = mock_process
 
             result = run_pytest(
-                ["test_file.py"],
-                ["-v", "--tb=short"],
-                parallel=True,
-                workers="2"
+                ["test_file.py"], ["-v", "--tb=short"], parallel=True, workers="2"
             )
 
             # Verify all args are present

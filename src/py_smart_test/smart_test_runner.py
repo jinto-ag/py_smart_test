@@ -12,7 +12,7 @@ from .file_hash_manager import HASH_FILE, update_hashes
 from .find_affected_modules import get_affected_tests
 from .generate_dependency_graph import main as generate_graph_main
 from .test_module_mapper import main as mapper_main
-from .utils import has_optional_dependency, get_optional_dependency_message
+from .utils import get_optional_dependency_message, has_optional_dependency
 
 # ... imports ...
 
@@ -53,11 +53,11 @@ def setup_logging():
 
 
 def run_pytest(
-    tests: List[str], 
-    extra_args: List[str], 
-    parallel: bool = False, 
+    tests: List[str],
+    extra_args: List[str],
+    parallel: bool = False,
     workers: str = "auto",
-    coverage: bool = False
+    coverage: bool = False,
 ) -> bool:
     """Run pytest with the given tests and extra args.
 
@@ -65,7 +65,7 @@ def run_pytest(
     Raises CalledProcessError if tests fail.
     """
     cmd = ["pytest"] + extra_args
-    
+
     # Add parallel execution flags if requested
     if parallel:
         if has_optional_dependency("xdist"):
@@ -74,7 +74,7 @@ def run_pytest(
         else:
             logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
-    
+
     # Add coverage flags if requested
     if coverage:
         if has_optional_dependency("pytest_cov"):
@@ -83,7 +83,7 @@ def run_pytest(
         else:
             logger.warning(get_optional_dependency_message("pytest_cov", "pytest-cov"))
             logger.warning("Coverage reporting disabled.")
-    
+
     if tests:
         cmd.extend(tests)
     else:
@@ -151,9 +151,9 @@ def main(
     # When the user runs `pst` with no special flags, we just run
     # `pytest --smart` and let the plugin handle everything.
     use_fast_path = (
-        mode == "affected" 
-        and not json_output 
-        and not dry_run 
+        mode == "affected"
+        and not json_output
+        and not dry_run
         and not regenerate_graph
         and not parallel
         and not coverage
@@ -250,7 +250,9 @@ def main(
     is_full_run = first_run or mode == "all"
 
     try:
-        tests_ran = run_pytest(tests_to_run, extra_pytest_args, parallel, parallel_workers, coverage)
+        tests_ran = run_pytest(
+            tests_to_run, extra_pytest_args, parallel, parallel_workers, coverage
+        )
 
         # Only update hashes when tests actually ran
         # Bug #3: Only update hashes on full runs to avoid masking

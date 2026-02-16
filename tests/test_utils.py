@@ -1,6 +1,6 @@
 """Tests for utility functions."""
 
-from py_smart_test.utils import has_optional_dependency, get_optional_dependency_message
+from py_smart_test.utils import get_optional_dependency_message, has_optional_dependency
 
 
 class TestHasOptionalDependency:

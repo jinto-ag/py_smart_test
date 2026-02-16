@@ -163,18 +163,19 @@ def get_affected_tests(
         if mod in graph["modules"]:
             tests = graph["modules"][mod].get("tests", [])
             tests_to_run.update(tests)
-    
+
     # If coverage-based tracking is enabled, augment with coverage data
     if use_coverage:
         try:
-            from .coverage_tracker import load_coverage_mapping, get_tests_for_files
-            
+            from .coverage_tracker import get_tests_for_files, load_coverage_mapping
+
             coverage_mapping = load_coverage_mapping()
             if coverage_mapping:
                 coverage_tests = get_tests_for_files(changed_files, coverage_mapping)
                 if coverage_tests:
+                    test_count = len(coverage_tests)
                     logger.info(
-                        f"Coverage-based tracking found {len(coverage_tests)} additional tests"
+                        f"Coverage-based tracking found {test_count} additional tests"
                     )
                     tests_to_run.update(coverage_tests)
         except ImportError:

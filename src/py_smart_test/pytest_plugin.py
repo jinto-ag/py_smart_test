@@ -30,7 +30,7 @@ from .test_module_mapper import main as mapper_main  # noqa: E402
 from .test_outcome_store import load_failed_tests  # noqa: E402
 from .test_outcome_store import Outcome, load_test_durations, save_outcomes
 from .test_prioritizer import prioritize_tests  # noqa: E402
-from .utils import has_optional_dependency, get_optional_dependency_message
+from .utils import get_optional_dependency_message, has_optional_dependency
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +104,7 @@ def pytest_configure(config: pytest.Config) -> None:
         if has_optional_dependency("xdist"):
             # Get the number of workers
             workers = config.getoption("--smart-parallel-workers", default="auto")
-            
+
             # Configure xdist numprocesses if not already set
             if not getattr(config.option, "numprocesses", None):
                 config.option.numprocesses = workers
@@ -112,7 +112,7 @@ def pytest_configure(config: pytest.Config) -> None:
         else:
             logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
             logger.warning("Falling back to sequential execution.")
-    
+
     # If --smart-coverage is specified, inject coverage options
     if config.getoption("--smart-coverage", default=False):
         if has_optional_dependency("pytest_cov"):

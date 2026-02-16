@@ -2,14 +2,14 @@
 
 import json
 from pathlib import Path
-from unittest.mock import MagicMock, patch, mock_open
+from unittest.mock import MagicMock, mock_open, patch
 
 from py_smart_test.coverage_tracker import (
-    load_coverage_mapping,
-    save_coverage_mapping,
-    merge_coverage_mapping,
-    get_tests_for_files,
     clear_coverage_mapping,
+    get_tests_for_files,
+    load_coverage_mapping,
+    merge_coverage_mapping,
+    save_coverage_mapping,
 )
 
 
@@ -19,7 +19,7 @@ class TestCoverageMapping:
     def test_load_coverage_mapping_not_exists(self, tmp_path, monkeypatch):
         """Test loading when file doesn't exist returns empty dict."""
         fake_file = tmp_path / "nonexistent.json"
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             result = load_coverage_mapping()
             assert result == {}
@@ -32,7 +32,7 @@ class TestCoverageMapping:
             "src/other.py": ["tests/test_other.py::test_other"],
         }
         fake_file.write_text(json.dumps(mapping))
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             result = load_coverage_mapping()
             assert result == mapping
@@ -41,7 +41,7 @@ class TestCoverageMapping:
         """Test loading with invalid JSON returns empty dict."""
         fake_file = tmp_path / "coverage_mapping.json"
         fake_file.write_text("invalid json {")
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             result = load_coverage_mapping()
             assert result == {}
@@ -52,10 +52,10 @@ class TestCoverageMapping:
         mapping = {
             "src/module.py": ["tests/test_module.py::test_func"],
         }
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             save_coverage_mapping(mapping)
-            
+
             # Verify file was created with correct content
             assert fake_file.exists()
             saved_data = json.loads(fake_file.read_text())
@@ -65,10 +65,10 @@ class TestCoverageMapping:
         """Test saving creates parent directories if needed."""
         fake_file = tmp_path / "nested" / "dir" / "coverage_mapping.json"
         mapping = {"src/module.py": ["tests/test_module.py"]}
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             save_coverage_mapping(mapping)
-            
+
             assert fake_file.exists()
             assert fake_file.parent.exists()
 
@@ -82,9 +82,9 @@ class TestMergeCoverageMapping:
         new_data = {
             "src/module.py": ["tests/test_module.py::test_func"],
         }
-        
+
         result = merge_coverage_mapping(existing, new_data)
-        
+
         assert result == new_data
 
     def test_merge_new_files(self):
@@ -95,9 +95,9 @@ class TestMergeCoverageMapping:
         new_data = {
             "src/other.py": ["tests/test_other.py::test_other"],
         }
-        
+
         result = merge_coverage_mapping(existing, new_data)
-        
+
         assert "src/module.py" in result
         assert "src/other.py" in result
         assert result["src/module.py"] == existing["src/module.py"]
@@ -109,11 +109,14 @@ class TestMergeCoverageMapping:
             "src/module.py": ["tests/test_module.py::test_func"],
         }
         new_data = {
-            "src/module.py": ["tests/test_module.py::test_func", "tests/test_other.py::test_other"],
+            "src/module.py": [
+                "tests/test_module.py::test_func",
+                "tests/test_other.py::test_other",
+            ],
         }
-        
+
         result = merge_coverage_mapping(existing, new_data)
-        
+
         assert sorted(result["src/module.py"]) == [
             "tests/test_module.py::test_func",
             "tests/test_other.py::test_other",
@@ -127,9 +130,9 @@ class TestMergeCoverageMapping:
         new_data = {
             "src/module.py": ["tests/a.py::test_a"],
         }
-        
+
         result = merge_coverage_mapping(existing, new_data)
-        
+
         assert result["src/module.py"] == [
             "tests/a.py::test_a",
             "tests/z.py::test_z",
@@ -143,9 +146,9 @@ class TestGetTestsForFiles:
         """Test with empty coverage mapping."""
         changed_files = [Path("src/module.py")]
         mapping = {}
-        
+
         result = get_tests_for_files(changed_files, mapping)
-        
+
         assert result == set()
 
     def test_get_tests_for_files_found(self):
@@ -154,9 +157,9 @@ class TestGetTestsForFiles:
         mapping = {
             "src/module.py": ["tests/test_module.py::test_func"],
         }
-        
+
         result = get_tests_for_files(changed_files, mapping)
-        
+
         assert result == {"tests/test_module.py::test_func"}
 
     def test_get_tests_for_files_multiple_files(self):
@@ -166,9 +169,9 @@ class TestGetTestsForFiles:
             "src/module.py": ["tests/test_module.py::test_func"],
             "src/other.py": ["tests/test_other.py::test_other"],
         }
-        
+
         result = get_tests_for_files(changed_files, mapping)
-        
+
         assert result == {
             "tests/test_module.py::test_func",
             "tests/test_other.py::test_other",
@@ -180,9 +183,9 @@ class TestGetTestsForFiles:
         mapping = {
             "src/module.py": ["tests/test_module.py::test_func"],
         }
-        
+
         result = get_tests_for_files(changed_files, mapping)
-        
+
         assert result == set()
 
 
@@ -193,20 +196,20 @@ class TestClearCoverageMapping:
         """Test clearing when file exists."""
         fake_file = tmp_path / "coverage_mapping.json"
         fake_file.write_text("{}")
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             clear_coverage_mapping()
-            
+
             assert not fake_file.exists()
 
     def test_clear_coverage_mapping_not_exists(self, tmp_path):
         """Test clearing when file doesn't exist (should not error)."""
         fake_file = tmp_path / "nonexistent.json"
-        
+
         with patch("py_smart_test.coverage_tracker.COVERAGE_DATA_FILE", fake_file):
             # Should not raise an error
             clear_coverage_mapping()
-            
+
             assert not fake_file.exists()
 
 
@@ -216,9 +219,9 @@ class TestUpdateCoverageFromPytestRun:
     def test_update_coverage_with_invalid_file(self, tmp_path):
         """Test that function handles invalid coverage file gracefully."""
         from py_smart_test.coverage_tracker import update_coverage_from_pytest_run
-        
+
         fake_coverage_file = tmp_path / "nonexistent.coverage"
-        
+
         # Should not raise an error, just log and continue
         update_coverage_from_pytest_run(fake_coverage_file)
 
@@ -229,17 +232,21 @@ class TestCoverageIntegration:
     def test_get_affected_tests_with_coverage_disabled(self):
         """Test that coverage tracking is optional."""
         from py_smart_test.find_affected_modules import get_affected_tests
-        
-        with patch("py_smart_test.find_affected_modules.get_changed_files") as mock_changed:
-            with patch("py_smart_test.find_affected_modules._paths.get_graph_file") as mock_graph:
+
+        with patch(
+            "py_smart_test.find_affected_modules.get_changed_files"
+        ) as mock_changed:
+            with patch(
+                "py_smart_test.find_affected_modules._paths.get_graph_file"
+            ) as mock_graph:
                 mock_changed.return_value = []
                 mock_graph_file = MagicMock()
                 mock_graph_file.exists.return_value = True
                 mock_graph.return_value = mock_graph_file
-                
+
                 with patch("builtins.open", mock_open(read_data='{"modules": {}}')):
                     result = get_affected_tests(use_coverage=False)
-                    
+
                     # Should work without coverage
                     assert "tests" in result
                     assert "affected_modules" in result
@@ -247,21 +254,33 @@ class TestCoverageIntegration:
     def test_get_affected_tests_with_coverage_enabled(self):
         """Test that coverage tracking augments results."""
         from py_smart_test.find_affected_modules import get_affected_tests
-        
-        with patch("py_smart_test.find_affected_modules.get_changed_files") as mock_changed:
-            with patch("py_smart_test.find_affected_modules._paths.get_graph_file") as mock_graph:
-                with patch("py_smart_test.coverage_tracker.load_coverage_mapping") as mock_load:
-                    with patch("py_smart_test.coverage_tracker.get_tests_for_files") as mock_get_tests:
+
+        with patch(
+            "py_smart_test.find_affected_modules.get_changed_files"
+        ) as mock_changed:
+            with patch(
+                "py_smart_test.find_affected_modules._paths.get_graph_file"
+            ) as mock_graph:
+                with patch(
+                    "py_smart_test.coverage_tracker.load_coverage_mapping"
+                ) as mock_load:
+                    with patch(
+                        "py_smart_test.coverage_tracker.get_tests_for_files"
+                    ) as mock_get_tests:
                         mock_changed.return_value = [Path("src/module.py")]
                         mock_graph_file = MagicMock()
                         mock_graph_file.exists.return_value = True
                         mock_graph.return_value = mock_graph_file
-                        
-                        mock_load.return_value = {"src/module.py": ["tests/test_cov.py::test_it"]}
+
+                        mock_load.return_value = {
+                            "src/module.py": ["tests/test_cov.py::test_it"]
+                        }
                         mock_get_tests.return_value = {"tests/test_cov.py::test_it"}
-                        
-                        with patch("builtins.open", mock_open(read_data='{"modules": {}}')):
+
+                        with patch(
+                            "builtins.open", mock_open(read_data='{"modules": {}}')
+                        ):
                             result = get_affected_tests(use_coverage=True)
-                            
+
                             # Should include coverage-based tests
                             assert "tests/test_cov.py::test_it" in result["tests"]
