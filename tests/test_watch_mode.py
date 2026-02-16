@@ -141,7 +141,7 @@ class TestStartWatchMode:
     """Tests for start_watch_mode function."""
 
     @pytest.mark.skipif(not HAS_WATCHDOG, reason="watchdog not installed")
-    @patch("py_smart_test.watch_mode.Observer")
+    @patch("watchdog.observers.Observer")
     def test_start_watch_mode_creates_observer(self, mock_observer_class, tmp_path):
         """Test that start_watch_mode creates and starts observer."""
         callback = Mock()

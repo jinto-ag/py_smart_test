@@ -21,10 +21,9 @@ logger = logging.getLogger(__name__)
 # Optional dependency - gracefully handle if not installed
 HAS_WATCHDOG = True
 try:
-    from watchdog.observers import Observer
+    import watchdog  # noqa: F401
 except ImportError:
     HAS_WATCHDOG = False
-    Observer = None
 
 
 class SourceFileWatcher:
@@ -135,12 +134,14 @@ def start_watch_mode(
     Returns:
         Observer instance if watchdog is available, None otherwise
     """
-    if not HAS_WATCHDOG or Observer is None:
+    if not HAS_WATCHDOG:
         logger.error(
             "Watch mode requires 'watchdog' package. "
             "Install with: pip install watchdog"
         )
         return None
+
+    from watchdog.observers import Observer
 
     # Create event handler
     handler = SourceFileWatcher(on_change, debounce_seconds)

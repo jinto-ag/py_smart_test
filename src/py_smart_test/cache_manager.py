@@ -15,24 +15,19 @@ Benefits:
 
 from __future__ import annotations
 
+import importlib.util
 import json
 import logging
 import threading
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-try:
-    import orjson
-
-    HAS_ORJSON = True
-except ImportError:
-    HAS_ORJSON = False
-    orjson = None
-
 from . import _paths
 from .remote_cache import get_remote_cache_backend
 
 logger = logging.getLogger(__name__)
+
+HAS_ORJSON = importlib.util.find_spec("orjson") is not None
 
 
 class CacheEntry:
@@ -67,7 +62,9 @@ class CacheEntry:
 
         try:
             with open(self.file_path, "rb" if HAS_ORJSON else "r") as f:
-                if HAS_ORJSON and orjson is not None:
+                if HAS_ORJSON:
+                    import orjson
+
                     self._data = orjson.loads(f.read())
                 else:
                     self._data = json.load(f)
@@ -91,7 +88,9 @@ class CacheEntry:
             self.file_path.parent.mkdir(parents=True, exist_ok=True)
 
             with open(self.file_path, "wb" if HAS_ORJSON else "w") as f:
-                if HAS_ORJSON and orjson is not None:
+                if HAS_ORJSON:
+                    import orjson
+
                     f.write(orjson.dumps(self._data, option=orjson.OPT_INDENT_2))
                 else:
                     json.dump(self._data, f, indent=2)
