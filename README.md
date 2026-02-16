@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-171%20passed-green.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-170%20passed-green.svg)](#testing)
 [![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen.svg)](#testing)
 
 **Smart Test Runner and Pytest Plugin** for Python projects. Runs only the tests affected by your code changes, with intelligent prioritization, outcome tracking, and robust fallbacks.
@@ -349,17 +349,18 @@ uv run pytest tests/test_pytest_plugin.py -v
 
 ### Test Suite
 
-- **171 tests** covering all modules
+- **170 tests** covering all modules
 - **96% overall coverage** (estimated)
 - Core modules at **100%**: `pytest_plugin.py`, `test_outcome_store.py`, `test_prioritizer.py`
-- **New features tested**: parallel execution (8 tests), coverage tracking (20 tests), utilities (8 tests)
+- **New features tested**: parallel execution (8 tests), coverage tracking (17 tests), utilities (6 tests)
 
 | Test File                           | Tests | What's Covered                                       |
 | ----------------------------------- | ----- | ---------------------------------------------------- |
 | `test_pytest_plugin.py`             | 21    | Plugin hooks, option registration, smart/first modes |
+| `test_paths.py`                     | 19    | Path discovery and configuration                     |
 | `test_coverage_tracking.py`         | 17    | Coverage mapping, persistence, integration           |
-| `test_find_affected_modules.py`     | 16    | Change detection, dependency traversal, working-tree |
 | `test_smart_test_runner.py`         | 17    | CLI orchestration, pytest invocation, error handling |
+| `test_find_affected_modules.py`     | 16    | Change detection, dependency traversal, working-tree |
 | `test_outcome_store.py`             | 15    | Outcome persistence, error handling, corrupt data    |
 | `test_detect_graph_staleness.py`    | 11    | Graph freshness, hash comparison                     |
 | `test_file_hash_manager.py`         | 9     | Hash computation, snapshot management                |
@@ -367,8 +368,8 @@ uv run pytest tests/test_pytest_plugin.py -v
 | `test_generate_dependency_graph.py` | 8     | AST parsing, import resolution                       |
 | `test_test_module_mapper.py`        | 8     | Module-to-test mapping heuristics                    |
 | `test_prioritizer.py`               | 7     | Test ordering logic                                  |
+| `test_utils.py`                     | 6     | Utility functions for dependency checking            |
 | `test_bug_fixes.py`                 | 5     | Regression tests for fixed bugs                      |
-| `test_paths.py`                     | 19    | Path discovery and configuration                     |
 | `test_init.py`                      | 2     | Package initialization                               |
 
 ## 🏗️ Development

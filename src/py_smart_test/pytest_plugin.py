@@ -105,8 +105,8 @@ def pytest_configure(config: pytest.Config) -> None:
             # Get the number of workers
             workers = config.getoption("--smart-parallel-workers", default="auto")
             
-            # Inject -n option for xdist if not already present
-            if not config.getoption("-n", default=None):
+            # Configure xdist numprocesses if not already set
+            if not getattr(config.option, "numprocesses", None):
                 config.option.numprocesses = workers
                 logger.info(f"Parallel execution enabled with {workers} workers")
         else:
@@ -116,8 +116,9 @@ def pytest_configure(config: pytest.Config) -> None:
     # If --smart-coverage is specified, inject coverage options
     if config.getoption("--smart-coverage", default=False):
         if has_optional_dependency("pytest_cov"):
-            # Inject --cov options if not already present
-            if not config.getoption("--cov", default=None):
+            # Inject coverage options if not already present
+            existing_cov_source = getattr(config.option, "cov_source", None)
+            if not existing_cov_source:
                 # Enable coverage for source code
                 config.option.cov_source = [str(_paths.SRC_ROOT)]
                 logger.info("Coverage tracking enabled")
