@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-163%20passed-green.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-171%20passed-green.svg)](#testing)
 [![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen.svg)](#testing)
 
 **Smart Test Runner and Pytest Plugin** for Python projects. Runs only the tests affected by your code changes, with intelligent prioritization, outcome tracking, and robust fallbacks.
@@ -349,10 +349,10 @@ uv run pytest tests/test_pytest_plugin.py -v
 
 ### Test Suite
 
-- **163 tests** covering all modules
+- **171 tests** covering all modules
 - **96% overall coverage** (estimated)
 - Core modules at **100%**: `pytest_plugin.py`, `test_outcome_store.py`, `test_prioritizer.py`
-- **New features tested**: parallel execution (8 tests), coverage tracking (17 tests)
+- **New features tested**: parallel execution (8 tests), coverage tracking (20 tests), utilities (8 tests)
 
 | Test File                           | Tests | What's Covered                                       |
 | ----------------------------------- | ----- | ---------------------------------------------------- |

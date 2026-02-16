@@ -42,4 +42,5 @@ class TestGetOptionalDependencyMessage:
     def test_replaces_underscores(self):
         """Test that underscores are replaced with hyphens in package names."""
         msg = get_optional_dependency_message("pytest_xdist")
-        assert "pip install pytest-xdist" in msg
+        assert "pytest_xdist" in msg  # Module name should appear
+        assert "pip install pytest-xdist" in msg  # Package name with hyphen
