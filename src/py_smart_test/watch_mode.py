@@ -10,7 +10,7 @@ import logging
 import subprocess
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Optional, Set
+from typing import Any, Callable, Optional, Set
 
 from . import _paths
 
@@ -25,17 +25,14 @@ try:
     from watchdog.observers import Observer  # type: ignore[import-untyped]
 
     HAS_WATCHDOG = True
+    _ObserverType = Observer
 except ImportError:
     HAS_WATCHDOG = False
     # Fallback types for when watchdog is not installed
-    if TYPE_CHECKING:
-        from typing import Any as FileSystemEvent
-        from typing import Any as FileSystemEventHandler
-        from typing import Any as Observer
-    else:
-        FileSystemEventHandler = object
-        Observer = type(None)
-        FileSystemEvent = type(None)
+    FileSystemEventHandler = object  # type: ignore[misc,assignment]
+    FileSystemEvent = None  # type: ignore[misc,assignment]
+    Observer = None  # type: ignore[misc,assignment]
+    _ObserverType = Any  # type: ignore[misc,assignment]
 
 
 class SourceFileWatcher(FileSystemEventHandler):
@@ -123,7 +120,7 @@ def start_watch_mode(
     Returns:
         Observer instance if watchdog is available, None otherwise
     """
-    if not HAS_WATCHDOG:
+    if not HAS_WATCHDOG or Observer is None:
         logger.error(
             "Watch mode requires 'watchdog' package. "
             "Install with: pip install watchdog"
@@ -134,40 +131,38 @@ def start_watch_mode(
     handler = SourceFileWatcher(on_change, debounce_seconds)
 
     # Create observer
-    observer = Observer()  # type: ignore[misc]
+    observer = Observer()
 
     # Watch source directory
     if _paths.SRC_ROOT.exists():
-        # type: ignore[attr-defined]
         observer.schedule(handler, str(_paths.SRC_ROOT), recursive=True)
         logger.info(f"Watching: {_paths.SRC_ROOT}")
 
     # Watch tests directory
     tests_root = _paths.REPO_ROOT / "tests"
     if tests_root.exists():
-        # type: ignore[attr-defined]
         observer.schedule(handler, str(tests_root), recursive=True)
         logger.info(f"Watching: {tests_root}")
 
     # Start observer and debounce check loop
     try:
-        observer.start()  # type: ignore[attr-defined]
+        observer.start()
         logger.info("Watch mode started. Press Ctrl+C to stop.")
 
         # Start debounce check loop
         while True:
             time.sleep(0.1)
-            handler.flush_pending_changes()  # type: ignore[attr-defined]
+            handler.flush_pending_changes()
     except KeyboardInterrupt:
         logger.info("Stopping watch mode...")
-        observer.stop()  # type: ignore[attr-defined]
-        observer.join()  # type: ignore[attr-defined]
+        observer.stop()
+        observer.join()
         return None
     finally:
         # Ensure cleanup even if exception other than KeyboardInterrupt
-        if observer.is_alive():  # type: ignore[attr-defined]
-            observer.stop()  # type: ignore[attr-defined]
-            observer.join()  # type: ignore[attr-defined]
+        if observer.is_alive():
+            observer.stop()
+            observer.join()
 
     return observer
 
