@@ -10,11 +10,8 @@ allow_licenses:
   - "PSF-2.0"
   - "MPL-2.0"
   - "Python-2.0"
+  - "GPL-1.0-or-later"  # Required for gitdb (indirect dependency via GitPython)
 fail_on_scopes:
   - "runtime"
 vulnerability_check: true
 license_check: true
-# Allow specific packages with complex or undetected licenses
-allow_dependencies_licenses:
-  - "pkg:pip/gitdb"  # Multi-license BSD/GPL, widely used git library
-  - "pkg:pip/pyarrow"  # Apache-2.0 licensed but detection may fail

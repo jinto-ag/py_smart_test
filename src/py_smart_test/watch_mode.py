@@ -138,34 +138,36 @@ def start_watch_mode(
 
     # Watch source directory
     if _paths.SRC_ROOT.exists():
+        # type: ignore[attr-defined]
         observer.schedule(handler, str(_paths.SRC_ROOT), recursive=True)
         logger.info(f"Watching: {_paths.SRC_ROOT}")
 
     # Watch tests directory
     tests_root = _paths.REPO_ROOT / "tests"
     if tests_root.exists():
+        # type: ignore[attr-defined]
         observer.schedule(handler, str(tests_root), recursive=True)
         logger.info(f"Watching: {tests_root}")
 
     # Start observer and debounce check loop
     try:
-        observer.start()
+        observer.start()  # type: ignore[attr-defined]
         logger.info("Watch mode started. Press Ctrl+C to stop.")
 
         # Start debounce check loop
         while True:
             time.sleep(0.1)
-            handler.flush_pending_changes()
+            handler.flush_pending_changes()  # type: ignore[attr-defined]
     except KeyboardInterrupt:
         logger.info("Stopping watch mode...")
-        observer.stop()
-        observer.join()
+        observer.stop()  # type: ignore[attr-defined]
+        observer.join()  # type: ignore[attr-defined]
         return None
     finally:
         # Ensure cleanup even if exception other than KeyboardInterrupt
-        if observer.is_alive():
-            observer.stop()
-            observer.join()
+        if observer.is_alive():  # type: ignore[attr-defined]
+            observer.stop()  # type: ignore[attr-defined]
+            observer.join()  # type: ignore[attr-defined]
 
     return observer
 

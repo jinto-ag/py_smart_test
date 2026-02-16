@@ -75,6 +75,7 @@ class CacheEntry:
         try:
             with open(self.file_path, "rb" if HAS_ORJSON else "r") as f:
                 if HAS_ORJSON and orjson is not None:
+                    # type: ignore[possibly-unbound]
                     self._data = orjson.loads(f.read())
                 else:
                     self._data = json.load(f)
@@ -99,6 +100,7 @@ class CacheEntry:
 
             with open(self.file_path, "wb" if HAS_ORJSON else "w") as f:
                 if HAS_ORJSON and orjson is not None:
+                    # type: ignore[possibly-unbound]
                     f.write(orjson.dumps(self._data, option=orjson.OPT_INDENT_2))
                 else:
                     json.dump(self._data, f, indent=2)
