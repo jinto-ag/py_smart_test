@@ -154,3 +154,182 @@ class TestCliErrorConditions:
         )
         # Should handle gracefully (may exit with error or show empty results)
         assert result.returncode in (0, 1)
+
+
+class TestPstParallel:
+    """Test ``pst`` CLI with parallel execution options."""
+
+    def test_pst_with_parallel_flag(self, sample_project: Path) -> None:
+        """Test ``pst --parallel`` for parallel test execution."""
+        result = _run_cli(sample_project, "pst", "--parallel", check=False)
+        assert result.returncode == 0
+
+    def test_pst_with_parallel_workers(self, sample_project: Path) -> None:
+        """Test ``pst --parallel`` with custom worker count."""
+        result = _run_cli(
+            sample_project, "pst", "--parallel", "--parallel-workers", "2", check=False
+        )
+        assert result.returncode == 0
+
+    def test_py_smart_test_with_parallel(self, sample_project: Path) -> None:
+        """Test ``py-smart-test --parallel`` flag."""
+        result = _run_cli(sample_project, "py-smart-test", "--parallel", check=False)
+        assert result.returncode == 0
+
+    def test_py_smart_test_parallel_auto_workers(self, sample_project: Path) -> None:
+        """Test parallel execution with auto-detected worker count."""
+        result = _run_cli(
+            sample_project,
+            "py-smart-test",
+            "--parallel",
+            "--parallel-workers",
+            "auto",
+            check=False,
+        )
+        assert result.returncode == 0
+
+    def test_pst_parallel_dry_run(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --dry-run`` shows parallel configuration."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--dry-run",
+            check=False,
+        )
+        assert result.returncode == 0
+        # Should complete without error (output varies based on state)
+
+
+class TestPstCoverage:
+    """Test ``pst`` CLI with coverage tracking options."""
+
+    def test_pst_with_coverage_flag(self, sample_project: Path) -> None:
+        """Test ``pst --coverage`` for coverage tracking."""
+        result = _run_cli(sample_project, "pst", "--coverage", check=False)
+        assert result.returncode == 0
+
+    def test_py_smart_test_with_coverage(self, sample_project: Path) -> None:
+        """Test ``py-smart-test --coverage`` flag."""
+        result = _run_cli(sample_project, "py-smart-test", "--coverage", check=False)
+        assert result.returncode == 0
+
+    def test_pst_coverage_dry_run(self, sample_project: Path) -> None:
+        """Test ``pst --coverage --dry-run`` shows coverage configuration."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--coverage",
+            "--dry-run",
+            check=False,
+        )
+        assert result.returncode == 0
+        # Should complete without error (output varies based on state)
+
+    def test_pst_coverage_json_output(self, sample_project: Path) -> None:
+        """Test ``pst --coverage --json`` outputs configuration."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--coverage",
+            "--json",
+            check=False,
+        )
+        assert result.returncode == 0
+        # Should complete without error
+
+
+class TestPstParallelAndCoverage:
+    """Test ``pst`` CLI with both parallel and coverage options."""
+
+    def test_pst_parallel_and_coverage(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --coverage`` together."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--coverage",
+            check=False,
+        )
+        assert result.returncode == 0
+
+    def test_py_smart_test_parallel_and_coverage(self, sample_project: Path) -> None:
+        """Test ``py-smart-test --parallel --coverage`` together."""
+        result = _run_cli(
+            sample_project,
+            "py-smart-test",
+            "--parallel",
+            "--coverage",
+            check=False,
+        )
+        assert result.returncode == 0
+
+    def test_pst_parallel_coverage_custom_workers(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --parallel-workers N --coverage`` combined."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--parallel-workers",
+            "2",
+            "--coverage",
+            check=False,
+        )
+        assert result.returncode == 0
+
+    def test_pst_parallel_coverage_dry_run(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --coverage --dry-run`` shows full config."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--coverage",
+            "--dry-run",
+            check=False,
+        )
+        assert result.returncode == 0
+
+    def test_pst_parallel_coverage_json_dry_run(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --coverage --json --dry-run`` outputs JSON."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--coverage",
+            "--json",
+            "--dry-run",
+            check=False,
+        )
+        assert result.returncode == 0
+
+
+class TestPstParallelWorkersVariations:
+    """Test various parallel worker configurations."""
+
+    def test_pst_workers_single(self, sample_project: Path) -> None:
+        """Test ``--parallel-workers 1`` for sequential execution via parallel."""
+        result = _run_cli(
+            sample_project, "pst", "--parallel", "--parallel-workers", "1", check=False
+        )
+        assert result.returncode == 0
+
+    def test_pst_workers_large_count(self, sample_project: Path) -> None:
+        """Test ``--parallel-workers`` with a large count."""
+        result = _run_cli(
+            sample_project, "pst", "--parallel", "--parallel-workers", "8", check=False
+        )
+        assert result.returncode == 0
+
+    def test_pst_parallel_regenerate_with_workers(self, sample_project: Path) -> None:
+        """Test ``pst --parallel --parallel-workers N --regenerate-graph``."""
+        result = _run_cli(
+            sample_project,
+            "pst",
+            "--parallel",
+            "--parallel-workers",
+            "2",
+            "--regenerate-graph",
+            "--dry-run",
+            check=False,
+        )
+        assert result.returncode == 0

@@ -258,7 +258,7 @@ def test_main_output(mock_paths, monkeypatch):
     monkeypatch.setattr(
         find_affected_modules,
         "get_affected_tests",
-        lambda b, s: {"affected_modules": ["mod"], "tests": ["test.py"]},
+        lambda b, s, c: {"affected_modules": ["mod"], "tests": ["test.py"]},
     )
 
     result = runner.invoke(find_affected_modules.app)

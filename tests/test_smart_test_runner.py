@@ -147,7 +147,7 @@ def test_smart_runner_graph_regen(monkeypatch):
     monkeypatch.setattr(smart_test_runner, "generate_graph_main", mock_gen)
     monkeypatch.setattr(smart_test_runner, "mapper_main", mock_map)
     monkeypatch.setattr(
-        smart_test_runner, "get_affected_tests", lambda s, st: {"tests": []}
+        smart_test_runner, "get_affected_tests", lambda s, st, c: {"tests": []}
     )
 
     result = runner.invoke(
@@ -192,7 +192,7 @@ def test_smart_runner_no_tests(monkeypatch):
         smart_test_runner, "HASH_FILE", MagicMock(exists=MagicMock(return_value=True))
     )
     monkeypatch.setattr(
-        smart_test_runner, "get_affected_tests", lambda s, st: {"tests": []}
+        smart_test_runner, "get_affected_tests", lambda s, st, c: {"tests": []}
     )
 
     mock_logger = MagicMock()

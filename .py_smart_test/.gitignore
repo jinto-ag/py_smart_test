@@ -1,5 +1,7 @@
 # Generated files - do not commit
 dependency_graph.json
 file_hashes.json
+coverage_mapping.json
+test_outcomes.json
 cache/
 logs/

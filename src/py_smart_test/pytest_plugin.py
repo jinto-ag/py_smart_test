@@ -30,6 +30,7 @@ from .test_module_mapper import main as mapper_main  # noqa: E402
 from .test_outcome_store import load_failed_tests  # noqa: E402
 from .test_outcome_store import Outcome, load_test_durations, save_outcomes
 from .test_prioritizer import prioritize_tests  # noqa: E402
+from .utils import get_optional_dependency_message, has_optional_dependency
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +78,53 @@ def pytest_addoption(parser: pytest.Parser) -> None:
         default=False,
         help="Detect changes via git status (unstaged/untracked files).",
     )
+    group.addoption(
+        "--smart-parallel",
+        action="store_true",
+        default=False,
+        help="Run tests in parallel using pytest-xdist (requires pytest-xdist).",
+    )
+    group.addoption(
+        "--smart-parallel-workers",
+        default="auto",
+        help="Number of workers for parallel execution (default: auto).",
+    )
+    group.addoption(
+        "--smart-coverage",
+        action="store_true",
+        default=False,
+        help="Enable coverage-based dependency tracking (requires pytest-cov).",
+    )
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Configure pytest for smart testing with parallel execution."""
+    # If --smart-parallel is specified, inject xdist options
+    if config.getoption("--smart-parallel", default=False):
+        if has_optional_dependency("xdist"):
+            # Get the number of workers
+            workers = config.getoption("--smart-parallel-workers", default="auto")
+
+            # Configure xdist numprocesses if not already set
+            if not getattr(config.option, "numprocesses", None):
+                config.option.numprocesses = workers
+                logger.info(f"Parallel execution enabled with {workers} workers")
+        else:
+            logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
+            logger.warning("Falling back to sequential execution.")
+
+    # If --smart-coverage is specified, inject coverage options
+    if config.getoption("--smart-coverage", default=False):
+        if has_optional_dependency("pytest_cov"):
+            # Inject coverage options if not already present
+            existing_cov_source = getattr(config.option, "cov_source", None)
+            if not existing_cov_source:
+                # Enable coverage for source code
+                config.option.cov_source = [str(_paths.SRC_ROOT)]
+                logger.info("Coverage tracking enabled")
+        else:
+            logger.warning(get_optional_dependency_message("pytest_cov", "pytest-cov"))
+            logger.warning("Coverage tracking disabled.")
 
 
 def pytest_collection_modifyitems(
@@ -106,6 +154,7 @@ def pytest_collection_modifyitems(
     since = config.getoption("--smart-since") or _paths.DEFAULT_BRANCH
     staged = config.getoption("--smart-staged")
     working_tree = config.getoption("--smart-working-tree")
+    use_coverage = config.getoption("--smart-coverage", default=False)
 
     if working_tree:
         # Inject working-tree files into the affected analysis
@@ -114,7 +163,7 @@ def pytest_collection_modifyitems(
         # already handles git diff.  Working-tree mode replaces the diff
         # source, so we synthesize a result.
 
-        result = get_affected_tests(since, staged)
+        result = get_affected_tests(since, staged, use_coverage)
         # Merge in working-tree files that may not appear in git diff
         wt_paths = {p.as_posix() for p in _wt_files}
         existing = set(result.get("tests", []))
@@ -123,7 +172,7 @@ def pytest_collection_modifyitems(
                 existing.add(path)
         result["tests"] = sorted(existing)
     else:
-        result = get_affected_tests(since, staged)
+        result = get_affected_tests(since, staged, use_coverage)
 
     affected_node_ids: Set[str] = set()
     affected_test_files = set(result.get("tests", []))

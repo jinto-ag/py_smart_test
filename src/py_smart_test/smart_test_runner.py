@@ -12,6 +12,7 @@ from .file_hash_manager import HASH_FILE, update_hashes
 from .find_affected_modules import get_affected_tests
 from .generate_dependency_graph import main as generate_graph_main
 from .test_module_mapper import main as mapper_main
+from .utils import get_optional_dependency_message, has_optional_dependency
 
 # ... imports ...
 
@@ -51,13 +52,38 @@ def setup_logging():
     return log_file
 
 
-def run_pytest(tests: List[str], extra_args: List[str]) -> bool:
+def run_pytest(
+    tests: List[str],
+    extra_args: List[str],
+    parallel: bool = False,
+    workers: str = "auto",
+    coverage: bool = False,
+) -> bool:
     """Run pytest with the given tests and extra args.
 
     Returns True if tests were executed successfully, False if no tests to run.
     Raises CalledProcessError if tests fail.
     """
     cmd = ["pytest"] + extra_args
+
+    # Add parallel execution flags if requested
+    if parallel:
+        if has_optional_dependency("xdist"):
+            cmd.extend(["-n", workers])
+            logger.info(f"Parallel execution enabled with {workers} workers")
+        else:
+            logger.warning(get_optional_dependency_message("xdist", "pytest-xdist"))
+            logger.warning("Falling back to sequential execution.")
+
+    # Add coverage flags if requested
+    if coverage:
+        if has_optional_dependency("pytest_cov"):
+            cmd.extend(["--cov", str(_paths.SRC_ROOT), "--cov-report", "term-missing"])
+            logger.info("Coverage reporting enabled")
+        else:
+            logger.warning(get_optional_dependency_message("pytest_cov", "pytest-cov"))
+            logger.warning("Coverage reporting disabled.")
+
     if tests:
         cmd.extend(tests)
     else:
@@ -101,6 +127,15 @@ def main(
     json_output: bool = typer.Option(
         False, "--json", help="Output affected tests as JSON and exit (no test run)"
     ),
+    parallel: bool = typer.Option(
+        False, "--parallel", help="Run tests in parallel using pytest-xdist"
+    ),
+    parallel_workers: str = typer.Option(
+        "auto", "--parallel-workers", help="Number of parallel workers (default: auto)"
+    ),
+    coverage: bool = typer.Option(
+        False, "--coverage", help="Enable coverage tracking and reporting"
+    ),
 ):
     """
     Smart test runner.
@@ -116,7 +151,12 @@ def main(
     # When the user runs `pst` with no special flags, we just run
     # `pytest --smart` and let the plugin handle everything.
     use_fast_path = (
-        mode == "affected" and not json_output and not dry_run and not regenerate_graph
+        mode == "affected"
+        and not json_output
+        and not dry_run
+        and not regenerate_graph
+        and not parallel
+        and not coverage
     )
     if use_fast_path:
         pytest_cmd = ["pytest", "--smart"]
@@ -171,7 +211,7 @@ def main(
             tests_to_run = ["tests/"]
         else:
             try:
-                affected_data = get_affected_tests(since, staged)
+                affected_data = get_affected_tests(since, staged, coverage)
                 tests_to_run = affected_data["tests"]
 
                 if not tests_to_run:
@@ -189,7 +229,7 @@ def main(
 
     if json_output:
         result_data = (
-            get_affected_tests(since, staged)
+            get_affected_tests(since, staged, coverage)
             if mode == "affected"
             else {"tests": tests_to_run}
         )
@@ -210,7 +250,9 @@ def main(
     is_full_run = first_run or mode == "all"
 
     try:
-        tests_ran = run_pytest(tests_to_run, extra_pytest_args)
+        tests_ran = run_pytest(
+            tests_to_run, extra_pytest_args, parallel, parallel_workers, coverage
+        )
 
         # Only update hashes when tests actually ran
         # Bug #3: Only update hashes on full runs to avoid masking

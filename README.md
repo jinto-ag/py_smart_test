@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://img.shields.io/badge/tests-109%20passed-green.svg)](#testing)
+[![Tests](https://img.shields.io/badge/tests-170%20passed-green.svg)](#testing)
 [![Coverage](https://img.shields.io/badge/coverage-96%25-brightgreen.svg)](#testing)
 
 **Smart Test Runner and Pytest Plugin** for Python projects. Runs only the tests affected by your code changes, with intelligent prioritization, outcome tracking, and robust fallbacks.
@@ -11,6 +11,8 @@
 
 - **Pytest Plugin** — zero-config integration via `--smart`, `--smart-first`, and `--smart-working-tree` flags
 - **Smart Test Execution** — runs only tests relevant to changed code (Git diff, staged, working-tree, or hash-based detection)
+- **Parallel Execution** — run tests concurrently across multiple CPUs using pytest-xdist integration
+- **Coverage-Based Tracking** — optional runtime dependency tracking via pytest-cov for higher precision
 - **Test Prioritization** — previously failed tests run first, then affected, then by historical duration
 - **Outcome Tracking** — persists pass/fail/skip results and durations across sessions for smarter ordering
 - **Dependency Graph Analysis** — AST-based import analysis builds comprehensive transitive dependency maps
@@ -46,7 +48,16 @@
 ### Install from PyPI
 
 ```bash
-pip install py-smart-test
+uv add py-smart-test
+
+# Optional: Install with parallel execution support
+uv add "py-smart-test[parallel]"
+
+# Optional: Install with coverage tracking support
+uv add "py-smart-test[coverage]"
+
+# Optional: Install with all optional features
+uv add "py-smart-test[all]"
 ```
 
 ### Install from Source
@@ -78,6 +89,15 @@ pytest --smart-working-tree
 
 # Combine: working-tree detection + affected-only
 pytest --smart --smart-working-tree
+
+# Run tests in parallel using multiple CPUs
+pytest --smart --smart-parallel
+
+# Run tests in parallel with specific number of workers
+pytest --smart --smart-parallel --smart-parallel-workers 4
+
+# Enable coverage-based dependency tracking
+pytest --smart --smart-coverage
 ```
 
 ### As a CLI Tool
@@ -100,6 +120,18 @@ py-smart-test --mode all
 
 # Force graph regeneration
 py-smart-test --regenerate-graph
+
+# Run tests in parallel with automatic worker detection
+py-smart-test --parallel
+
+# Run tests in parallel with specific number of workers
+py-smart-test --parallel --parallel-workers 4
+
+# Run tests with coverage reporting
+py-smart-test --coverage
+
+# Combine features: parallel execution with coverage
+py-smart-test --parallel --coverage
 ```
 
 ## 🔌 Pytest Plugin
@@ -108,14 +140,17 @@ The pytest plugin integrates directly into your test workflow — no configurati
 
 ### Plugin Options
 
-| Flag                   | Description                                                                       |
-| ---------------------- | --------------------------------------------------------------------------------- |
-| `--smart`              | Run **only** tests affected by code changes. Deselects unaffected tests entirely. |
-| `--smart-first`        | Run **all** tests, but prioritize affected tests first.                           |
-| `--smart-no-collect`   | Alias for `--smart`.                                                              |
-| `--smart-since REF`    | Git reference to diff against (default: `main`).                                  |
-| `--smart-staged`       | Diff staged changes only (like `git diff --cached`).                              |
-| `--smart-working-tree` | Detect changes via `git status` — ideal for active development.                   |
+| Flag                          | Description                                                                       |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| `--smart`                     | Run **only** tests affected by code changes. Deselects unaffected tests entirely. |
+| `--smart-first`               | Run **all** tests, but prioritize affected tests first.                           |
+| `--smart-no-collect`          | Alias for `--smart`.                                                              |
+| `--smart-since REF`           | Git reference to diff against (default: `main`).                                  |
+| `--smart-staged`              | Diff staged changes only (like `git diff --cached`).                              |
+| `--smart-working-tree`        | Detect changes via `git status` — ideal for active development.                   |
+| `--smart-parallel`            | Run tests in parallel using pytest-xdist (requires pytest-xdist).                 |
+| `--smart-parallel-workers N`  | Number of parallel workers (default: `auto`). Use with `--smart-parallel`.        |
+| `--smart-coverage`            | Enable coverage-based dependency tracking (requires pytest-cov).                  |
 
 ### How It Works
 
@@ -140,6 +175,15 @@ pytest --smart-first
 
 # Only staged changes (pre-commit hook style)
 pytest --smart --smart-staged
+
+# Run affected tests in parallel for faster execution
+pytest --smart --smart-parallel
+
+# Run with coverage tracking for more precise test selection
+pytest --smart --smart-coverage
+
+# Combine parallel execution and coverage tracking
+pytest --smart --smart-parallel --smart-coverage
 ```
 
 ## 💻 CLI Usage
@@ -164,15 +208,18 @@ py-smart-test [OPTIONS]
 
 **Options:**
 
-| Option                               | Default         | Description                            |
-| ------------------------------------ | --------------- | -------------------------------------- |
-| `--mode [affected\|all]`             | `affected`      | Test mode                              |
-| `--since REF`                        | `main`          | Git base reference                     |
-| `--staged` / `--no-staged`           | `--no-staged`   | Use only staged changes                |
-| `--regenerate-graph`                 | `false`         | Force dependency graph regeneration    |
-| `--exclude-e2e` / `--no-exclude-e2e` | `--exclude-e2e` | Exclude E2E tests                      |
-| `--dry-run`                          | `false`         | Show what would run without executing  |
-| `--json`                             | `false`         | Output affected tests as JSON and exit |
+| Option                               | Default         | Description                                    |
+| ------------------------------------ | --------------- | ---------------------------------------------- |
+| `--mode [affected\|all]`             | `affected`      | Test mode                                      |
+| `--since REF`                        | `main`          | Git base reference                             |
+| `--staged` / `--no-staged`           | `--no-staged`   | Use only staged changes                        |
+| `--regenerate-graph`                 | `false`         | Force dependency graph regeneration            |
+| `--exclude-e2e` / `--no-exclude-e2e` | `--exclude-e2e` | Exclude E2E tests                              |
+| `--dry-run`                          | `false`         | Show what would run without executing          |
+| `--json`                             | `false`         | Output affected tests as JSON and exit         |
+| `--parallel`                         | `false`         | Run tests in parallel using pytest-xdist       |
+| `--parallel-workers N`               | `auto`          | Number of parallel workers (use with `--parallel`) |
+| `--coverage`                         | `false`         | Enable coverage tracking and reporting         |
 
 ### `pst-affected` — Find Affected Modules
 
@@ -182,9 +229,10 @@ Debug or script affected module detection.
 pst-affected [OPTIONS]
 
 Options:
-  --base REF      Git base reference (default: main)
-  --staged        Check staged changes only
-  --json          Output in JSON format
+  --base REF         Git base reference (default: main)
+  --staged           Check staged changes only
+  --use-coverage     Use coverage-based tracking for more precise results
+  --json             Output in JSON format
 ```
 
 ### `pst-gen` — Generate Dependency Graph
@@ -248,6 +296,7 @@ graph TD
 ├── dependency_graph.json     # Import dependency graph
 ├── file_hashes.json          # File hash snapshots
 ├── outcomes.json             # Test pass/fail/duration history
+├── coverage_mapping.json     # Coverage-based test-to-code mappings (optional)
 ├── logs/
 │   └── latest_run.log        # Execution logs
 └── cache/                    # Reserved for future use
@@ -300,23 +349,28 @@ uv run pytest tests/test_pytest_plugin.py -v
 
 ### Test Suite
 
-- **109 tests** covering all modules
-- **96% overall coverage** (713 statements, 29 missed)
+- **170 tests** covering all modules
+- **96% overall coverage** (estimated)
 - Core modules at **100%**: `pytest_plugin.py`, `test_outcome_store.py`, `test_prioritizer.py`
+- **New features tested**: parallel execution (8 tests), coverage tracking (17 tests), utilities (6 tests)
 
 | Test File                           | Tests | What's Covered                                       |
 | ----------------------------------- | ----- | ---------------------------------------------------- |
 | `test_pytest_plugin.py`             | 21    | Plugin hooks, option registration, smart/first modes |
-| `test_find_affected_modules.py`     | 15    | Change detection, dependency traversal, working-tree |
-| `test_smart_test_runner.py`         | 12    | CLI orchestration, pytest invocation, error handling |
-| `test_outcome_store.py`             | 12    | Outcome persistence, error handling, corrupt data    |
+| `test_paths.py`                     | 19    | Path discovery and configuration                     |
+| `test_coverage_tracking.py`         | 17    | Coverage mapping, persistence, integration           |
+| `test_smart_test_runner.py`         | 17    | CLI orchestration, pytest invocation, error handling |
+| `test_find_affected_modules.py`     | 16    | Change detection, dependency traversal, working-tree |
+| `test_outcome_store.py`             | 15    | Outcome persistence, error handling, corrupt data    |
 | `test_detect_graph_staleness.py`    | 11    | Graph freshness, hash comparison                     |
 | `test_file_hash_manager.py`         | 9     | Hash computation, snapshot management                |
+| `test_parallel_execution.py`        | 8     | Parallel test execution, xdist integration           |
 | `test_generate_dependency_graph.py` | 8     | AST parsing, import resolution                       |
 | `test_test_module_mapper.py`        | 8     | Module-to-test mapping heuristics                    |
 | `test_prioritizer.py`               | 7     | Test ordering logic                                  |
+| `test_utils.py`                     | 6     | Utility functions for dependency checking            |
 | `test_bug_fixes.py`                 | 5     | Regression tests for fixed bugs                      |
-| `test_init.py`                      | 1     | Package initialization                               |
+| `test_init.py`                      | 2     | Package initialization                               |
 
 ## 🏗️ Development
 
