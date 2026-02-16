@@ -1,4 +1,5 @@
 import ast
+import hmac
 import json
 import logging
 import os
@@ -212,7 +213,7 @@ def _parse_files_incremental(
             cached_entry = ast_cache.get(rel_path)
             if (
                 cached_entry
-                and cached_entry.get("hash") == current_hash
+                and hmac.compare_digest(cached_entry.get("hash", ""), current_hash)
                 and cached_entry.get("module_name") == mod_name
             ):
                 # Cache hit: reuse parsed data

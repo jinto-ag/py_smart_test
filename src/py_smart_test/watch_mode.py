@@ -21,7 +21,9 @@ logger = logging.getLogger(__name__)
 # Optional dependency - gracefully handle if not installed
 HAS_WATCHDOG = True
 try:
-    import watchdog  # noqa: F401
+    import watchdog as _watchdog  # noqa: F401
+
+    del _watchdog
 except ImportError:
     HAS_WATCHDOG = False
 
@@ -180,8 +182,6 @@ def start_watch_mode(
         if observer.is_alive():
             observer.stop()
             observer.join()
-
-    return observer
 
 
 def watch_and_test(
