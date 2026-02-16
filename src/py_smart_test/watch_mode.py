@@ -29,7 +29,12 @@ try:
 except ImportError:
     HAS_WATCHDOG = False
     # Fallback types for when watchdog is not installed
-    FileSystemEventHandler = object  # type: ignore[misc,assignment]
+
+    class FileSystemEventHandler:  # type: ignore[no-redef]
+        """Fallback event handler when watchdog not installed."""
+
+        pass
+
     FileSystemEvent = None  # type: ignore[misc,assignment]
     Observer = None  # type: ignore[misc,assignment]
     _ObserverType = Any  # type: ignore[misc,assignment]
