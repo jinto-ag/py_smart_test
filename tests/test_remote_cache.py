@@ -1,7 +1,10 @@
 """Tests for remote caching functionality."""
 
 import json
+import sys
 from unittest.mock import Mock, patch
+
+import pytest
 
 from py_smart_test.remote_cache import (
     FileShareBackend,
@@ -68,6 +71,9 @@ class TestFileShareBackend:
         success = backend.delete("nonexistent")
         assert success is True  # Should not fail
 
+    @pytest.mark.skipif(
+        sys.platform == "win32", reason="chmod doesn't work same way on Windows"
+    )
     def test_set_handles_corrupt_data(self, tmp_path):
         """Test handling of errors during set."""
         backend = FileShareBackend(str(tmp_path))

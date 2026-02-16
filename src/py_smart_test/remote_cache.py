@@ -345,7 +345,7 @@ class S3Backend(RemoteCacheBackend):
         self.prefix = prefix
 
         try:
-            import boto3
+            import boto3  # type: ignore[import-untyped]
 
             self.s3_client = boto3.client(
                 "s3",

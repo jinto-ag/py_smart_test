@@ -14,3 +14,7 @@ fail_on_scopes:
   - "runtime"
 vulnerability_check: true
 license_check: true
+# Allow specific packages with complex or undetected licenses
+allow_dependencies_licenses:
+  - "pkg:pip/gitdb"  # Multi-license BSD/GPL, widely used git library
+  - "pkg:pip/pyarrow"  # Apache-2.0 licensed but detection may fail

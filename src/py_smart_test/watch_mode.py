@@ -10,7 +10,7 @@ import logging
 import subprocess
 import time
 from pathlib import Path
-from typing import Callable, Optional, Set
+from typing import TYPE_CHECKING, Any, Callable, Optional, Set
 
 from . import _paths
 
@@ -18,15 +18,24 @@ logger = logging.getLogger(__name__)
 
 # Optional dependency - gracefully handle if not installed
 try:
-    from watchdog.events import FileSystemEvent, FileSystemEventHandler
-    from watchdog.observers import Observer
+    from watchdog.events import (  # type: ignore[import-untyped]
+        FileSystemEvent,
+        FileSystemEventHandler,
+    )
+    from watchdog.observers import Observer  # type: ignore[import-untyped]
 
     HAS_WATCHDOG = True
 except ImportError:
     HAS_WATCHDOG = False
-    FileSystemEventHandler = object  # type: ignore
-    Observer = None  # type: ignore
-    FileSystemEvent = None  # type: ignore
+    # Fallback types for when watchdog is not installed
+    if TYPE_CHECKING:
+        from typing import Any as FileSystemEvent
+        from typing import Any as FileSystemEventHandler
+        from typing import Any as Observer
+    else:
+        FileSystemEventHandler = object
+        Observer = type(None)
+        FileSystemEvent = type(None)
 
 
 class SourceFileWatcher(FileSystemEventHandler):
@@ -49,7 +58,7 @@ class SourceFileWatcher(FileSystemEventHandler):
         self._pending_changes: Set[Path] = set()
         self._last_event_time = 0.0
 
-    def on_modified(self, event: FileSystemEvent) -> None:
+    def on_modified(self, event: Any) -> None:  # FileSystemEvent when available
         """Handle file modification events."""
         if event.is_directory:
             return
@@ -68,7 +77,7 @@ class SourceFileWatcher(FileSystemEventHandler):
         self._pending_changes.add(path)
         self._last_event_time = time.time()
 
-    def on_created(self, event: FileSystemEvent) -> None:
+    def on_created(self, event: Any) -> None:  # FileSystemEvent when available
         """Handle file creation events."""
         self.on_modified(event)
 
@@ -104,7 +113,7 @@ class SourceFileWatcher(FileSystemEventHandler):
 def start_watch_mode(
     on_change: Callable[[Set[Path]], None],
     debounce_seconds: float = 0.5,
-) -> Optional[Observer]:
+) -> Any:  # Returns Observer when watchdog is available, None otherwise
     """Start watching for file changes.
 
     Args:
@@ -125,7 +134,7 @@ def start_watch_mode(
     handler = SourceFileWatcher(on_change, debounce_seconds)
 
     # Create observer
-    observer = Observer()
+    observer = Observer()  # type: ignore[misc]
 
     # Watch source directory
     if _paths.SRC_ROOT.exists():
