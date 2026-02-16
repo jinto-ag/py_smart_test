@@ -2,6 +2,8 @@
 
 This module provides file watching capabilities that automatically re-run
 affected tests when source files change, enabling a continuous testing workflow.
+
+Requires the 'watchdog' package: pip install 'py-smart-test[watch]'
 """
 
 from __future__ import annotations
@@ -17,31 +19,21 @@ from . import _paths
 logger = logging.getLogger(__name__)
 
 # Optional dependency - gracefully handle if not installed
+HAS_WATCHDOG = True
 try:
-    from watchdog.events import (  # type: ignore[import-untyped]
-        FileSystemEvent,
-        FileSystemEventHandler,
-    )
-    from watchdog.observers import Observer  # type: ignore[import-untyped]
-
-    HAS_WATCHDOG = True
-    _ObserverType = Observer
+    from watchdog.observers import Observer
 except ImportError:
     HAS_WATCHDOG = False
-    # Fallback types for when watchdog is not installed
-
-    class FileSystemEventHandler:  # type: ignore[no-redef]
-        """Fallback event handler when watchdog not installed."""
-
-        pass
-
-    FileSystemEvent = None  # type: ignore[misc,assignment]
-    Observer = None  # type: ignore[misc,assignment]
-    _ObserverType = Any  # type: ignore[misc,assignment]
+    Observer = None
 
 
-class SourceFileWatcher(FileSystemEventHandler):
-    """Watch for changes to Python source files."""
+class SourceFileWatcher:
+    """Watch for changes to Python source files.
+
+    Uses composition with watchdog's FileSystemEventHandler rather than
+    inheritance, so that the module can be imported even when watchdog
+    is not installed.
+    """
 
     def __init__(
         self,
@@ -54,13 +46,12 @@ class SourceFileWatcher(FileSystemEventHandler):
             on_change: Callback function called with set of changed files
             debounce_seconds: Wait time to collect multiple changes
         """
-        super().__init__()
         self.on_change = on_change
         self.debounce_seconds = debounce_seconds
         self._pending_changes: Set[Path] = set()
         self._last_event_time = 0.0
 
-    def on_modified(self, event: Any) -> None:  # FileSystemEvent when available
+    def on_modified(self, event: Any) -> None:
         """Handle file modification events."""
         if event.is_directory:
             return
@@ -79,7 +70,7 @@ class SourceFileWatcher(FileSystemEventHandler):
         self._pending_changes.add(path)
         self._last_event_time = time.time()
 
-    def on_created(self, event: Any) -> None:  # FileSystemEvent when available
+    def on_created(self, event: Any) -> None:
         """Handle file creation events."""
         self.on_modified(event)
 
@@ -111,6 +102,25 @@ class SourceFileWatcher(FileSystemEventHandler):
             logger.info(f"Processing {len(relative_changes)} changed file(s)")
             self.on_change(relative_changes)
 
+    def _create_event_handler(self) -> Any:
+        """Create a watchdog event handler that delegates events to this watcher.
+
+        Returns:
+            A watchdog FileSystemEventHandler instance.
+        """
+        from watchdog.events import FileSystemEventHandler
+
+        watcher = self
+
+        class _DelegatingHandler(FileSystemEventHandler):
+            def on_modified(self, event: Any) -> None:
+                watcher.on_modified(event)
+
+            def on_created(self, event: Any) -> None:
+                watcher.on_created(event)
+
+        return _DelegatingHandler()
+
 
 def start_watch_mode(
     on_change: Callable[[Set[Path]], None],
@@ -134,19 +144,20 @@ def start_watch_mode(
 
     # Create event handler
     handler = SourceFileWatcher(on_change, debounce_seconds)
+    event_handler = handler._create_event_handler()
 
     # Create observer
     observer = Observer()
 
     # Watch source directory
     if _paths.SRC_ROOT.exists():
-        observer.schedule(handler, str(_paths.SRC_ROOT), recursive=True)
+        observer.schedule(event_handler, str(_paths.SRC_ROOT), recursive=True)
         logger.info(f"Watching: {_paths.SRC_ROOT}")
 
     # Watch tests directory
     tests_root = _paths.REPO_ROOT / "tests"
     if tests_root.exists():
-        observer.schedule(handler, str(tests_root), recursive=True)
+        observer.schedule(event_handler, str(tests_root), recursive=True)
         logger.info(f"Watching: {tests_root}")
 
     # Start observer and debounce check loop

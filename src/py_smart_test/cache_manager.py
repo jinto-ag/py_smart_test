@@ -27,20 +27,12 @@ try:
     HAS_ORJSON = True
 except ImportError:
     HAS_ORJSON = False
-    orjson = None  # type: ignore[assignment]
+    orjson = None
 
 from . import _paths
+from .remote_cache import get_remote_cache_backend
 
 logger = logging.getLogger(__name__)
-
-# Import remote cache support (optional)
-try:
-    from .remote_cache import get_remote_cache_backend
-
-    HAS_REMOTE_CACHE = True
-except ImportError:
-    HAS_REMOTE_CACHE = False
-    get_remote_cache_backend = None  # type: ignore
 
 
 class CacheEntry:
@@ -307,9 +299,6 @@ class CacheManager:
 
     def _sync_to_remote(self) -> None:
         """Sync AST cache to remote backend if configured."""
-        if not HAS_REMOTE_CACHE or get_remote_cache_backend is None:
-            return
-
         backend = get_remote_cache_backend()
         if not backend:
             return
@@ -325,9 +314,6 @@ class CacheManager:
 
     def _sync_from_remote(self) -> None:
         """Load AST cache from remote backend if available."""
-        if not HAS_REMOTE_CACHE or get_remote_cache_backend is None:
-            return
-
         backend = get_remote_cache_backend()
         if not backend:
             return

@@ -61,6 +61,7 @@ packages = ["src/py_smart_test"]
 dev = [
     "basedpyright>=1.38.0",
     "black>=26.1.0",
+    "boto3>=1.35.0",
     "commitizen>=4.1.0",
     "coverage>=7.13.4",
     "flake8>=7.3.0",
@@ -78,7 +79,12 @@ dev = [
     "pytest-benchmark>=5.1.0",
     "pytest-cov>=7.0.0",
     "pytest-xdist>=3.8.0",
+    "redis>=5.2.0",
+    "requests>=2.32.0",
     "ruff>=0.15.1",
+    "types-redis>=4.6.0",
+    "types-requests>=2.32.0",
+    "watchdog>=6.0.0",
 ]
 
 [tool.commitizen]

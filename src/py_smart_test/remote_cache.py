@@ -148,7 +148,7 @@ class HTTPBackend(RemoteCacheBackend):
         self.api_key = api_key
 
         try:
-            import requests  # type: ignore[import-untyped]
+            import requests
 
             self.requests = requests
             self.has_requests = True
@@ -254,7 +254,7 @@ class RedisBackend(RemoteCacheBackend):
         self.prefix = prefix
 
         try:
-            import redis  # type: ignore[import-untyped]
+            import redis
 
             self.redis_client = redis.Redis(
                 host=host,
@@ -279,7 +279,7 @@ class RedisBackend(RemoteCacheBackend):
 
         try:
             data = self.redis_client.get(self._make_key(key))
-            if data:
+            if isinstance(data, (str, bytes)):
                 return json.loads(data)
             return None
         except Exception as e:
@@ -345,7 +345,7 @@ class S3Backend(RemoteCacheBackend):
         self.prefix = prefix
 
         try:
-            import boto3  # type: ignore[import-untyped]
+            import boto3
 
             self.s3_client = boto3.client(
                 "s3",
