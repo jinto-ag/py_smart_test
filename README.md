@@ -48,16 +48,16 @@
 ### Install from PyPI
 
 ```bash
-pip install py-smart-test
+uv add py-smart-test
 
 # Optional: Install with parallel execution support
-pip install "py-smart-test[parallel]"
+uv add "py-smart-test[parallel]"
 
 # Optional: Install with coverage tracking support
-pip install "py-smart-test[coverage]"
+uv add "py-smart-test[coverage]"
 
 # Optional: Install with all optional features
-pip install "py-smart-test[all]"
+uv add "py-smart-test[all]"
 ```
 
 ### Install from Source

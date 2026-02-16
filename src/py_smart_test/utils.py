@@ -33,4 +33,4 @@ def get_optional_dependency_message(module_name: str, install_package: Optional[
         Formatted message string
     """
     package = install_package or module_name.replace('_', '-')
-    return f"{module_name} not found. Install with: pip install {package}"
+    return f"{module_name} not found. Install with: uv add {package}"

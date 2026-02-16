@@ -31,16 +31,16 @@ class TestGetOptionalDependencyMessage:
         """Test message with default package name."""
         msg = get_optional_dependency_message("xdist")
         assert "xdist" in msg
-        assert "pip install xdist" in msg
+        assert "uv add xdist" in msg
 
     def test_custom_package_name(self):
         """Test message with custom package name."""
         msg = get_optional_dependency_message("pytest_cov", "pytest-cov")
         assert "pytest_cov" in msg
-        assert "pip install pytest-cov" in msg
+        assert "uv add pytest-cov" in msg
 
     def test_replaces_underscores(self):
         """Test that underscores are replaced with hyphens in package names."""
         msg = get_optional_dependency_message("pytest_xdist")
         assert "pytest_xdist" in msg  # Module name should appear
-        assert "pip install pytest-xdist" in msg  # Package name with hyphen
+        assert "uv add pytest-xdist" in msg  # Package name with hyphen
