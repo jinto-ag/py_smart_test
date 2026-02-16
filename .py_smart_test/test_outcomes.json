@@ -2,50 +2,617 @@
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_option_registered",
     "status": "passed",
-    "duration": 0.00011665999954857398,
-    "timestamp": 1771095686.6429126,
+    "duration": 0.00012742200124193914,
+    "timestamp": 1771248964.2185812,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_first_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_first_option_registered",
     "status": "passed",
-    "duration": 6.529900019813795e-05,
-    "timestamp": 1771095686.6429164,
+    "duration": 0.00013203500020608772,
+    "timestamp": 1771248964.2185755,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_since_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_since_option_registered",
     "status": "passed",
-    "duration": 5.928900100116152e-05,
-    "timestamp": 1771095686.6429186,
+    "duration": 0.00018202899991592858,
+    "timestamp": 1771248964.2185707,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_staged_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_staged_option_registered",
     "status": "passed",
-    "duration": 9.573899842507672e-05,
-    "timestamp": 1771095686.64292,
+    "duration": 0.00012760299978253897,
+    "timestamp": 1771248964.2185793,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_working_tree_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_working_tree_option_registered",
     "status": "passed",
-    "duration": 6.253500032471493e-05,
-    "timestamp": 1771095686.6429214,
+    "duration": 0.00014051700054551475,
+    "timestamp": 1771248964.2185733,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_no_collect_option_registered": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_smart_no_collect_option_registered",
     "status": "passed",
-    "duration": 8.612599958723877e-05,
-    "timestamp": 1771095686.642923,
+    "duration": 0.00014841099982731976,
+    "timestamp": 1771248964.2185771,
     "error_message": null
   },
   "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_is_false": {
     "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_is_false",
     "status": "failed",
-    "duration": 0.00020901900097669568,
-    "timestamp": 1771095686.642924,
+    "duration": 0.00097881199872063,
+    "timestamp": 1771248964.2185671,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_no_graph": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_no_graph",
+    "status": "passed",
+    "duration": 0.0004875129998254124,
+    "timestamp": 1771248964.218583,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_no_hashes": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_no_hashes",
+    "status": "passed",
+    "duration": 0.00042227000085404143,
+    "timestamp": 1771248964.2185848,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_fresh": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_fresh",
+    "status": "passed",
+    "duration": 0.0008457430012640543,
+    "timestamp": 1771248964.218587,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_modified": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_modified",
+    "status": "passed",
+    "duration": 0.00025138999990304,
+    "timestamp": 1771248964.2185886,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_new_file": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_new_file",
+    "status": "passed",
+    "duration": 0.00026660699950298294,
+    "timestamp": 1771248964.2185903,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_deleted_file": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_deleted_file",
+    "status": "passed",
+    "duration": 0.0005349009989004117,
+    "timestamp": 1771248964.2185917,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_no_hashes": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_no_hashes",
+    "status": "passed",
+    "duration": 0.0008596459992986638,
+    "timestamp": 1771248964.2185938,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_new_file": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_new_file",
+    "status": "passed",
+    "duration": 0.0015842909997445531,
+    "timestamp": 1771248964.2185955,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_modified": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_modified",
+    "status": "passed",
+    "duration": 0.0007816090001142584,
+    "timestamp": 1771248964.2185977,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_deleted": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_deleted",
+    "status": "passed",
+    "duration": 0.0013274289995024446,
+    "timestamp": 1771248964.2185993,
+    "error_message": null
+  },
+  "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_fresh": {
+    "node_id": "tests/test_detect_graph_staleness.py::test_is_graph_stale_verbose_fresh",
+    "status": "passed",
+    "duration": 0.0037396530005935347,
+    "timestamp": 1771248964.2186012,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_compute_file_hash": {
+    "node_id": "tests/test_file_hash_manager.py::test_compute_file_hash",
+    "status": "passed",
+    "duration": 0.0004584239995892858,
+    "timestamp": 1771248964.218603,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_load_save_hashes": {
+    "node_id": "tests/test_file_hash_manager.py::test_load_save_hashes",
+    "status": "passed",
+    "duration": 0.000910218999706558,
+    "timestamp": 1771248964.2186048,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_get_current_hashes": {
+    "node_id": "tests/test_file_hash_manager.py::test_get_current_hashes",
+    "status": "passed",
+    "duration": 0.0010527729991736123,
+    "timestamp": 1771248964.2186062,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_get_changed_files_hash_no_baseline": {
+    "node_id": "tests/test_file_hash_manager.py::test_get_changed_files_hash_no_baseline",
+    "status": "passed",
+    "duration": 0.001377954000417958,
+    "timestamp": 1771248964.218608,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_get_changed_files_hash_detection": {
+    "node_id": "tests/test_file_hash_manager.py::test_get_changed_files_hash_detection",
+    "status": "passed",
+    "duration": 0.0018990739990840666,
+    "timestamp": 1771248964.2186096,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_compute_file_hash_error": {
+    "node_id": "tests/test_file_hash_manager.py::test_compute_file_hash_error",
+    "status": "passed",
+    "duration": 0.0006297469990386162,
+    "timestamp": 1771248964.2186115,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_load_hashes_error": {
+    "node_id": "tests/test_file_hash_manager.py::test_load_hashes_error",
+    "status": "passed",
+    "duration": 0.0005582470002991613,
+    "timestamp": 1771248964.218613,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_save_hashes_error": {
+    "node_id": "tests/test_file_hash_manager.py::test_save_hashes_error",
+    "status": "passed",
+    "duration": 0.0006121420010458678,
+    "timestamp": 1771248964.2186153,
+    "error_message": null
+  },
+  "tests/test_file_hash_manager.py::test_get_current_hashes_value_error": {
+    "node_id": "tests/test_file_hash_manager.py::test_get_current_hashes_value_error",
+    "status": "passed",
+    "duration": 0.0002564650003478164,
+    "timestamp": 1771248964.2186167,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_transitive_dependency_logic": {
+    "node_id": "tests/test_find_affected_modules.py::test_transitive_dependency_logic",
+    "status": "passed",
+    "duration": 0.0002761249998002313,
+    "timestamp": 1771248964.2186184,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_affected_modules_integration": {
+    "node_id": "tests/test_find_affected_modules.py::test_affected_modules_integration",
+    "status": "passed",
+    "duration": 0.002554562999648624,
+    "timestamp": 1771248964.21862,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_changed_files_git_error": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_changed_files_git_error",
+    "status": "passed",
+    "duration": 0.0006904439997015288,
+    "timestamp": 1771248964.2186217,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_affected_tests_exception_handling": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_affected_tests_exception_handling",
+    "status": "passed",
+    "duration": 0.0015152360010688426,
+    "timestamp": 1771248964.2186322,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_changed_files_success": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_changed_files_success",
+    "status": "passed",
+    "duration": 0.00019264599905000068,
+    "timestamp": 1771248964.218634,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_main_graph_missing": {
+    "node_id": "tests/test_find_affected_modules.py::test_main_graph_missing",
+    "status": "passed",
+    "duration": 0.0017892140003823442,
+    "timestamp": 1771248964.218636,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_deleted_file_logic": {
+    "node_id": "tests/test_find_affected_modules.py::test_deleted_file_logic",
+    "status": "passed",
+    "duration": 0.001992208999581635,
+    "timestamp": 1771248964.2186377,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_changed_files_staged": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_changed_files_staged",
+    "status": "passed",
+    "duration": 0.0001791970007616328,
+    "timestamp": 1771248964.2186394,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_deleted_init_file": {
+    "node_id": "tests/test_find_affected_modules.py::test_deleted_init_file",
+    "status": "passed",
+    "duration": 0.00063821799994912,
+    "timestamp": 1771248964.2186415,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_main_output": {
+    "node_id": "tests/test_find_affected_modules.py::test_main_output",
+    "status": "passed",
+    "duration": 0.0022214559994608862,
+    "timestamp": 1771248964.218643,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_working_tree_changes_success": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_working_tree_changes_success",
+    "status": "passed",
+    "duration": 0.00025312500110885594,
+    "timestamp": 1771248964.2186446,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_working_tree_changes_renames": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_working_tree_changes_renames",
+    "status": "passed",
+    "duration": 0.00021270000070217066,
+    "timestamp": 1771248964.218646,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_working_tree_changes_empty": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_working_tree_changes_empty",
+    "status": "passed",
+    "duration": 0.00016814400078146718,
+    "timestamp": 1771248964.2186477,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_working_tree_changes_git_error": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_working_tree_changes_git_error",
+    "status": "passed",
+    "duration": 0.0008948159993451554,
+    "timestamp": 1771248964.2186494,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_get_working_tree_changes_blank_lines": {
+    "node_id": "tests/test_find_affected_modules.py::test_get_working_tree_changes_blank_lines",
+    "status": "passed",
+    "duration": 0.0001436219990864629,
+    "timestamp": 1771248964.218651,
+    "error_message": null
+  },
+  "tests/test_find_affected_modules.py::test_main_cli_json_output": {
+    "node_id": "tests/test_find_affected_modules.py::test_main_cli_json_output",
+    "status": "passed",
+    "duration": 0.0015040769994811853,
+    "timestamp": 1771248964.218653,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_get_module_name": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_get_module_name",
+    "status": "passed",
+    "duration": 0.0011146609995194012,
+    "timestamp": 1771248964.2186685,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_import_visitor_relative_resolution": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_import_visitor_relative_resolution",
+    "status": "passed",
+    "duration": 0.00022093799998401664,
+    "timestamp": 1771248964.2186701,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_syntax_error_handling": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_syntax_error_handling",
+    "status": "passed",
+    "duration": 0.0025939170009223744,
+    "timestamp": 1771248964.2186713,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_resolve_relative_edge_cases": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_resolve_relative_edge_cases",
+    "status": "passed",
+    "duration": 0.0003059940008824924,
+    "timestamp": 1771248964.2186728,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_resolve_relative_too_deep": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_resolve_relative_too_deep",
+    "status": "passed",
+    "duration": 0.00013929600027040578,
+    "timestamp": 1771248964.2186742,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_scan_and_build_graph": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_scan_and_build_graph",
+    "status": "passed",
+    "duration": 0.0018619820002641063,
+    "timestamp": 1771248964.2186756,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_import_visitor_resolution": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_import_visitor_resolution",
+    "status": "passed",
+    "duration": 0.00019905000044673216,
+    "timestamp": 1771248964.2186775,
+    "error_message": null
+  },
+  "tests/test_generate_dependency_graph.py::test_main_execution": {
+    "node_id": "tests/test_generate_dependency_graph.py::test_main_execution",
+    "status": "passed",
+    "duration": 0.0007741400004306342,
+    "timestamp": 1771248964.2186792,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_first_is_false": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_first_is_false",
+    "status": "passed",
+    "duration": 0.0001324500008195173,
+    "timestamp": 1771248964.2186809,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_since_is_none": {
+    "node_id": "tests/test_pytest_plugin.py::TestPluginOptions::test_default_smart_since_is_none",
+    "status": "passed",
+    "duration": 0.0001236629996128613,
+    "timestamp": 1771248964.2186823,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsNoOp::test_no_modification_without_flags": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsNoOp::test_no_modification_without_flags",
+    "status": "passed",
+    "duration": 0.0008738500000617933,
+    "timestamp": 1771248964.2186842,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_deselects_unaffected": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_deselects_unaffected",
+    "status": "passed",
+    "duration": 0.011841774999993504,
+    "timestamp": 1771248964.2186856,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_keeps_failed_tests": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_keeps_failed_tests",
+    "status": "passed",
+    "duration": 0.01146681099999114,
+    "timestamp": 1771248964.2186882,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_no_deselect_when_all_affected": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmart::test_smart_no_deselect_when_all_affected",
+    "status": "passed",
+    "duration": 0.008896115999959875,
+    "timestamp": 1771248964.2186897,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmartFirst::test_smart_first_reorders": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsSmartFirst::test_smart_first_reorders",
+    "status": "passed",
+    "duration": 0.00822777900066285,
+    "timestamp": 1771248964.2186913,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionModifyItemsWorkingTree::test_working_tree_merges_files": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionModifyItemsWorkingTree::test_working_tree_merges_files",
+    "status": "passed",
+    "duration": 0.009427150000192341,
+    "timestamp": 1771248964.218693,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestCollectionItemPathFallback::test_relative_to_failure_uses_fspath": {
+    "node_id": "tests/test_pytest_plugin.py::TestCollectionItemPathFallback::test_relative_to_failure_uses_fspath",
+    "status": "passed",
+    "duration": 0.008493387000271468,
+    "timestamp": 1771248964.2186944,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestSessionFinish::test_no_op_without_smart": {
+    "node_id": "tests/test_pytest_plugin.py::TestSessionFinish::test_no_op_without_smart",
+    "status": "passed",
+    "duration": 0.0006472770000982564,
+    "timestamp": 1771248964.218696,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestSessionFinish::test_saves_outcomes_with_smart": {
+    "node_id": "tests/test_pytest_plugin.py::TestSessionFinish::test_saves_outcomes_with_smart",
+    "status": "passed",
+    "duration": 0.0016646310014039045,
+    "timestamp": 1771248964.2186973,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestSessionFinish::test_skips_items_without_outcome": {
+    "node_id": "tests/test_pytest_plugin.py::TestSessionFinish::test_skips_items_without_outcome",
+    "status": "passed",
+    "duration": 0.002450493000651477,
+    "timestamp": 1771248964.218699,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestMakereport::test_records_call_phase": {
+    "node_id": "tests/test_pytest_plugin.py::TestMakereport::test_records_call_phase",
+    "status": "passed",
+    "duration": 0.0009736939991853433,
+    "timestamp": 1771248964.2187002,
+    "error_message": null
+  },
+  "tests/test_pytest_plugin.py::TestMakereport::test_ignores_setup_phase": {
+    "node_id": "tests/test_pytest_plugin.py::TestMakereport::test_ignores_setup_phase",
+    "status": "passed",
+    "duration": 0.0010368570001446642,
+    "timestamp": 1771248964.2187018,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_fast_path_default": {
+    "node_id": "tests/test_smart_test_runner.py::test_fast_path_default",
+    "status": "passed",
+    "duration": 0.0033247219998884248,
+    "timestamp": 1771248964.2187047,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_fast_path_with_since": {
+    "node_id": "tests/test_smart_test_runner.py::test_fast_path_with_since",
+    "status": "passed",
+    "duration": 0.0021959050009172643,
+    "timestamp": 1771248964.2187061,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_fast_path_with_staged": {
+    "node_id": "tests/test_smart_test_runner.py::test_fast_path_with_staged",
+    "status": "passed",
+    "duration": 0.00258612299876404,
+    "timestamp": 1771248964.218708,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_fast_path_no_exclude_e2e": {
+    "node_id": "tests/test_smart_test_runner.py::test_fast_path_no_exclude_e2e",
+    "status": "passed",
+    "duration": 0.0024894460002542473,
+    "timestamp": 1771248964.2187095,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_fast_path_failure_propagates": {
+    "node_id": "tests/test_smart_test_runner.py::test_fast_path_failure_propagates",
+    "status": "passed",
+    "duration": 0.0027349350002623396,
+    "timestamp": 1771248964.2187114,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_all": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_all",
+    "status": "passed",
+    "duration": 0.005187876000491087,
+    "timestamp": 1771248964.2187133,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_json_output": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_json_output",
+    "status": "passed",
+    "duration": 0.0035983029993076343,
+    "timestamp": 1771248964.218715,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_dry_run": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_dry_run",
+    "status": "passed",
+    "duration": 0.006338667000818532,
+    "timestamp": 1771248964.2187164,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_graph_regen": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_graph_regen",
+    "status": "passed",
+    "duration": 0.002798282001094776,
+    "timestamp": 1771248964.2187183,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_regenerate_graph_failure": {
+    "node_id": "tests/test_smart_test_runner.py::test_regenerate_graph_failure",
+    "status": "passed",
+    "duration": 0.00442692700016778,
+    "timestamp": 1771248964.2187195,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_no_tests": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_no_tests",
+    "status": "passed",
+    "duration": 0.002860889999283245,
+    "timestamp": 1771248964.2187207,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_subprocess_error": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_subprocess_error",
+    "status": "passed",
+    "duration": 0.002440184000079171,
+    "timestamp": 1771248964.2187226,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_updates_hashes_on_success": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_updates_hashes_on_success",
+    "status": "passed",
+    "duration": 0.0047158039997157175,
+    "timestamp": 1771248964.2187245,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_smart_runner_does_not_update_hashes_on_failure": {
+    "node_id": "tests/test_smart_test_runner.py::test_smart_runner_does_not_update_hashes_on_failure",
+    "status": "passed",
+    "duration": 0.0028113660009694286,
+    "timestamp": 1771248964.2187266,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_run_pytest_empty": {
+    "node_id": "tests/test_smart_test_runner.py::test_run_pytest_empty",
+    "status": "passed",
+    "duration": 0.0031476460007979767,
+    "timestamp": 1771248964.2187285,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_run_pytest_stdout_processing": {
+    "node_id": "tests/test_smart_test_runner.py::test_run_pytest_stdout_processing",
+    "status": "passed",
+    "duration": 0.007632041999386274,
+    "timestamp": 1771248964.21873,
+    "error_message": null
+  },
+  "tests/test_smart_test_runner.py::test_affected_mode_fallback_on_error": {
+    "node_id": "tests/test_smart_test_runner.py::test_affected_mode_fallback_on_error",
+    "status": "passed",
+    "duration": 0.0029672189994016662,
+    "timestamp": 1771248964.2187314,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestHasOptionalDependency::test_returns_true_for_installed_module": {
+    "node_id": "tests/test_utils.py::TestHasOptionalDependency::test_returns_true_for_installed_module",
+    "status": "passed",
+    "duration": 0.00017552099961903878,
+    "timestamp": 1771248964.218733,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestHasOptionalDependency::test_returns_false_for_missing_module": {
+    "node_id": "tests/test_utils.py::TestHasOptionalDependency::test_returns_false_for_missing_module",
+    "status": "passed",
+    "duration": 0.00028319500052020885,
+    "timestamp": 1771248964.2187347,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestHasOptionalDependency::test_handles_import_errors_gracefully": {
+    "node_id": "tests/test_utils.py::TestHasOptionalDependency::test_handles_import_errors_gracefully",
+    "status": "passed",
+    "duration": 0.00031312899955082685,
+    "timestamp": 1771248964.2187364,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestGetOptionalDependencyMessage::test_default_package_name": {
+    "node_id": "tests/test_utils.py::TestGetOptionalDependencyMessage::test_default_package_name",
+    "status": "passed",
+    "duration": 8.031200013647322e-05,
+    "timestamp": 1771248964.2187378,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestGetOptionalDependencyMessage::test_custom_package_name": {
+    "node_id": "tests/test_utils.py::TestGetOptionalDependencyMessage::test_custom_package_name",
+    "status": "passed",
+    "duration": 8.439299926976673e-05,
+    "timestamp": 1771248964.2187395,
+    "error_message": null
+  },
+  "tests/test_utils.py::TestGetOptionalDependencyMessage::test_replaces_underscores": {
+    "node_id": "tests/test_utils.py::TestGetOptionalDependencyMessage::test_replaces_underscores",
+    "status": "passed",
+    "duration": 7.568900036858395e-05,
+    "timestamp": 1771248964.2187407,
     "error_message": null
   }
 }

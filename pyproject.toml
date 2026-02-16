@@ -6,12 +6,23 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Jinto AG", email = "project.jintoag@gmail.com" }]
 requires-python = ">=3.11"
-dependencies = ["pydantic>=2.12.5", "typer>=0.9.0"]
+dependencies = ["orjson>=3.11.7", "pydantic>=2.12.5", "typer>=0.9.0"]
 
 [project.optional-dependencies]
 parallel = ["pytest-xdist>=3.0.0"]
 coverage = ["pytest-cov>=4.0.0"]
-all = ["pytest-xdist>=3.0.0", "pytest-cov>=4.0.0"]
+git = ["gitpython>=3.1.0"]
+watch = ["watchdog>=6.0.0"]
+remote-cache = ["boto3>=1.35.0", "redis>=5.2.0", "requests>=2.32.0"]
+all = [
+    "pytest-xdist>=3.0.0",
+    "pytest-cov>=4.0.0",
+    "gitpython>=3.1.0",
+    "watchdog>=6.0.0",
+    "boto3>=1.35.0",
+    "redis>=5.2.0",
+    "requests>=2.32.0",
+]
 
 [project.scripts]
 # Primary CLI
@@ -22,6 +33,7 @@ pst-gen = "py_smart_test.generate_dependency_graph:main"
 pst-map = "py_smart_test.test_module_mapper:main"
 pst-affected = "py_smart_test.find_affected_modules:app"
 pst-stale = "py_smart_test.detect_graph_staleness:main"
+pst-watch = "py_smart_test.watch_mode:watch_and_test"
 
 [build-system]
 requires = ["hatchling"]
@@ -32,8 +44,11 @@ py_smart_test = "py_smart_test.pytest_plugin"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-m 'not e2e'"
-markers = ["e2e: end-to-end tests (run with: pytest -m e2e)"]
+addopts = "-m 'not e2e and not benchmark'"
+markers = [
+    "e2e: end-to-end tests (run with: pytest -m e2e)",
+    "benchmark: performance benchmarks (run with: pytest -m benchmark)",
+]
 
 [tool.isort]
 profile = "black"
@@ -60,6 +75,7 @@ dev = [
     "pylance>=2.0.1",
     "pyright>=1.1.408",
     "pytest>=9.0.2",
+    "pytest-benchmark>=5.1.0",
     "pytest-cov>=7.0.0",
     "pytest-xdist>=3.8.0",
     "ruff>=0.15.1",
