@@ -2,7 +2,7 @@ import json
 import logging
 import subprocess
 from pathlib import Path
-from typing import Any, Dict, List, Set
+from typing import Any, Dict, List, Set, Optional
 
 import typer  # type: ignore
 
@@ -97,7 +97,7 @@ def get_transitive_dependents(graph: Dict[str, Any], modules: Set[str]) -> Set[s
 
 
 def get_affected_tests(
-    base: str = "main", staged: bool = False
+    base: str = "main", staged: bool = False, use_coverage: bool = False
 ) -> Dict[str, List[str]]:
     changed_files = get_changed_files(base, staged)
     logger.info(f"Changed files: {[str(f) for f in changed_files]}")
@@ -156,13 +156,29 @@ def get_affected_tests(
     # Compute impacted modules
     all_affected_modules = get_transitive_dependents(graph, affected_modules)
 
-    # Collect tests
+    # Collect tests from graph-based analysis
     tests_to_run = set(direct_test_files)
 
     for mod in all_affected_modules:
         if mod in graph["modules"]:
             tests = graph["modules"][mod].get("tests", [])
             tests_to_run.update(tests)
+    
+    # If coverage-based tracking is enabled, augment with coverage data
+    if use_coverage:
+        try:
+            from .coverage_tracker import load_coverage_mapping, get_tests_for_files
+            
+            coverage_mapping = load_coverage_mapping()
+            if coverage_mapping:
+                coverage_tests = get_tests_for_files(changed_files, coverage_mapping)
+                if coverage_tests:
+                    logger.info(
+                        f"Coverage-based tracking found {len(coverage_tests)} additional tests"
+                    )
+                    tests_to_run.update(coverage_tests)
+        except ImportError:
+            logger.debug("Coverage tracker not available")
 
     final_list = sorted(list(tests_to_run))
     return {"affected_modules": sorted(list(all_affected_modules)), "tests": final_list}
@@ -173,8 +189,11 @@ def main(
     base: str = typer.Option(_paths.DEFAULT_BRANCH, help="Git base reference"),
     staged: bool = typer.Option(False, help="Check staged changes only"),
     json_output: bool = typer.Option(False, "--json", help="Output in JSON format"),
+    use_coverage: bool = typer.Option(
+        False, "--use-coverage", help="Use coverage-based tracking"
+    ),
 ):
-    result = get_affected_tests(base, staged)
+    result = get_affected_tests(base, staged, use_coverage)
 
     if json_output:
         print(json.dumps(result, indent=2))

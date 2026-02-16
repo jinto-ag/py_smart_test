@@ -51,7 +51,13 @@ def setup_logging():
     return log_file
 
 
-def run_pytest(tests: List[str], extra_args: List[str], parallel: bool = False, workers: str = "auto") -> bool:
+def run_pytest(
+    tests: List[str], 
+    extra_args: List[str], 
+    parallel: bool = False, 
+    workers: str = "auto",
+    coverage: bool = False
+) -> bool:
     """Run pytest with the given tests and extra args.
 
     Returns True if tests were executed successfully, False if no tests to run.
@@ -70,6 +76,18 @@ def run_pytest(tests: List[str], extra_args: List[str], parallel: bool = False, 
                 "pytest-xdist not found. Install with: pip install pytest-xdist"
             )
             logger.warning("Falling back to sequential execution.")
+    
+    # Add coverage flags if requested
+    if coverage:
+        try:
+            import pytest_cov  # noqa: F401
+            cmd.extend(["--cov", str(_paths.SRC_ROOT), "--cov-report", "term-missing"])
+            logger.info("Coverage reporting enabled")
+        except ImportError:
+            logger.warning(
+                "pytest-cov not found. Install with: pip install pytest-cov"
+            )
+            logger.warning("Coverage reporting disabled.")
     
     if tests:
         cmd.extend(tests)
@@ -120,6 +138,9 @@ def main(
     parallel_workers: str = typer.Option(
         "auto", "--parallel-workers", help="Number of parallel workers (default: auto)"
     ),
+    coverage: bool = typer.Option(
+        False, "--coverage", help="Enable coverage tracking and reporting"
+    ),
 ):
     """
     Smart test runner.
@@ -140,6 +161,7 @@ def main(
         and not dry_run 
         and not regenerate_graph
         and not parallel
+        and not coverage
     )
     if use_fast_path:
         pytest_cmd = ["pytest", "--smart"]
@@ -194,7 +216,7 @@ def main(
             tests_to_run = ["tests/"]
         else:
             try:
-                affected_data = get_affected_tests(since, staged)
+                affected_data = get_affected_tests(since, staged, coverage)
                 tests_to_run = affected_data["tests"]
 
                 if not tests_to_run:
@@ -212,7 +234,7 @@ def main(
 
     if json_output:
         result_data = (
-            get_affected_tests(since, staged)
+            get_affected_tests(since, staged, coverage)
             if mode == "affected"
             else {"tests": tests_to_run}
         )
@@ -233,7 +255,7 @@ def main(
     is_full_run = first_run or mode == "all"
 
     try:
-        tests_ran = run_pytest(tests_to_run, extra_pytest_args, parallel, parallel_workers)
+        tests_ran = run_pytest(tests_to_run, extra_pytest_args, parallel, parallel_workers, coverage)
 
         # Only update hashes when tests actually ran
         # Bug #3: Only update hashes on full runs to avoid masking
