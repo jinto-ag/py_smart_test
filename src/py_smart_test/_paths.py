@@ -136,6 +136,9 @@ if not GITIGNORE_FILE.exists():
         """# Generated files - do not commit
 dependency_graph.json
 file_hashes.json
+coverage_mapping.json
+test_outcomes.json
+ast_parse_cache.json
 cache/
 logs/
 """

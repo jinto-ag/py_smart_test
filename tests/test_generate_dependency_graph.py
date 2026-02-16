@@ -145,8 +145,17 @@ def test_main_execution(mock_paths, monkeypatch):
 
     # Mock scan_and_build_graph
     monkeypatch.setattr(
-        generate_dependency_graph, "scan_and_build_graph", lambda r: {"modules": {}}
+        generate_dependency_graph,
+        "scan_and_build_graph",
+        lambda *args, **kwargs: {"modules": {}},
     )
+
+    # Mock cache manager
+    class MockCache:
+        def save_all(self):
+            pass
+
+    monkeypatch.setattr(generate_dependency_graph, "get_cache", lambda: MockCache())
 
     # Mock get_graph_file to return the temp path
     monkeypatch.setattr(_paths, "get_graph_file", lambda: mock_paths.GRAPH_FILE)

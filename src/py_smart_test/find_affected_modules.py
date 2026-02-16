@@ -143,7 +143,8 @@ def get_affected_tests(
                             mod_name = ".".join(rel_parts)
                             if mod_name in valid_modules:
                                 affected_modules.add(mod_name)
-                    except Exception:
+                    except (IndexError, ValueError):
+                        # Path didn't match expected src/ layout; skip
                         pass
 
             # Case 2: Test file
